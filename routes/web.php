@@ -125,11 +125,15 @@ Route::middleware(['auth', 'verified', 'AccessUser'])->group(function () {
     // packing
     Route::get('/A_product_packing_list', [\App\Http\Controllers\Admin\PackingController::class, 'A_product_packing_list'])->name('A_product_packing_list');
     Route::get('/A_post_packing_list', [\App\Http\Controllers\Admin\PackingController::class, 'A_post_packing_list'])->name('A_post_packing_list');
+    Route::get('/A_carton_list', [\App\Http\Controllers\Admin\PackingController::class, 'A_carton_list'])->name('A_carton_list');
+    Route::post('/ajax_carton_list', [\App\Http\Controllers\Admin\PackingController::class, 'ajax_carton_list'])->name('ajax_carton_list');
     Route::get('/ajax_fetch_packing', [\App\Http\Controllers\Admin\PackingController::class, 'ajax_fetch_packing'])->name('ajax_fetch_packing');
     Route::get('/ajax_save_packing', [\App\Http\Controllers\Admin\PackingController::class, 'ajax_save_packing'])->name('ajax_save_packing');
     Route::get('/ajax_product_packing_list', [\App\Http\Controllers\Admin\PackingController::class, 'ajax_product_packing_list'])->name('ajax_product_packing_list');
     Route::get('/A_delete_packing/{id}', [\App\Http\Controllers\Admin\PackingController::class, 'A_delete_packing'])->name('A_delete_packing');
-    Route::get('/A_post_packing_list', [\App\Http\Controllers\Admin\PackingController::class, 'A_post_packing_list'])->name('A_post_packing_list');
+    Route::get('/ajax_post_packing_list', [\App\Http\Controllers\Admin\PackingController::class, 'ajax_post_packing_list'])->name('ajax_post_packing_list');
+    Route::post('/ajax_post_packing_update', [\App\Http\Controllers\Admin\PackingController::class, 'ajax_post_packing_update'])->name('ajax_post_packing_update');
+    Route::post('/ajax_post_packing_create_pattern', [\App\Http\Controllers\Admin\PackingController::class, 'ajax_post_packing_create_pattern'])->name('ajax_post_packing_create_pattern');
 
 
 });
@@ -222,7 +226,10 @@ Route::post('/s_register_customer', [UserProfileController::class, 's_register_c
 Route::get('/customer_links', [UserProfileController::class, 'customer_links'])->name('customer_links');
 
 
+
 Route::get('/product_guide/{idOrSlug}', [\App\Http\Controllers\Customer\PostClientController::class, 'product_guide'])->name('product_guide');
+Route::get('/after_sales_service/{group_id}', [\App\Http\Controllers\Customer\IndexController::class, 'after_sales_service'])->name('after_sales_service');
+Route::get('/after_sales_service', [\App\Http\Controllers\Customer\IndexController::class, 'after_sales_service'])->name('after_sales_service');
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';

@@ -30,10 +30,18 @@ class ProductClientController extends Controller
         $slug = preg_replace('/[^A-Za-z0-9\-_آ-ی]+/u', '', $slug);
         $category = Category::with('childrenLvl1.childrenLvl1')->where('type', 'product')
             ->where('slug', trim($slug))
-            ->firstOrFail();
+            ->first();
+        $dataCategory = [
+            'name' => 'دسته نامعتبر',
+            'id' => '',
+        ];
+        if(!$category){
+            return view('Customer.Product.products', compact('dataCategory' ));
+        }
 
         $main_group_id_in_app = [];
         $group_id_in_app = [];
+
 
         $collectIds = function ($category) use (&$collectIds, &$main_group_id_in_app, &$group_id_in_app) {
             switch ($category->app_group_type) {
@@ -85,6 +93,7 @@ class ProductClientController extends Controller
             }
 
         }
+
 
 
 

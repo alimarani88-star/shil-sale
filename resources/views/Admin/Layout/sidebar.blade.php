@@ -148,9 +148,9 @@
                             </li>
                         </ul>
                     </li>
-                    <li class="nav-item has-treeview {{ request()->routeIs('A_post_packing_list', 'A_product_packing_list') ? 'menu-open' : '' }}">
+                    <li class="nav-item has-treeview {{ request()->routeIs('A_post_packing_list', 'A_product_packing_list','A_carton_list') ? 'menu-open' : '' }}">
                         <a href="#"
-                           class="nav-link {{ request()->routeIs('A_post_packing_list', 'A_product_packing_list') ? 'active' : '' }}">
+                           class="nav-link {{ request()->routeIs('A_post_packing_list', 'A_product_packing_list','A_carton_list') ? 'active' : '' }}">
                             <i class="nav-icon fa fa-cubes"></i>
                             <p>
                                 بسته بندی
@@ -170,6 +170,13 @@
                                    class="nav-link  {{ request()->routeIs('A_post_packing_list' ) ? 'active' : '' }}">
                                     <i class="fa fa-circle-o nav-icon"></i>
                                     <p>بسته بندی پست</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('A_carton_list') }}"
+                                   class="nav-link  {{ request()->routeIs('A_carton_list' ) ? 'active' : '' }}">
+                                    <i class="fa fa-circle-o nav-icon"></i>
+                                    <p>مدیریت جعبه ها</p>
                                 </a>
                             </li>
 

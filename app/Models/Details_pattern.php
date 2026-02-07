@@ -10,7 +10,8 @@ class Details_pattern extends Model
     protected $fillable = [
         'pattern_id',
         'packing_id',
-        'quantity'
+        'quantity',
+        'carton_id'
     ];
 
     public function pattern()
