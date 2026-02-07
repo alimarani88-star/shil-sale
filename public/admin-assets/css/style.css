@@ -1,0 +1,145 @@
+/* کانتینر اصلی */
+.main-body-container {
+    background-color: #FFFFFF;
+    /*margin: 1rem 1rem;*/
+    border-radius: .25rem;
+    padding: .2rem;
+}
+
+.breadcrumb {
+    background-color: #e9ecef;
+}
+
+.main-body-container-header h5 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.main-body-container-header p {
+    font-size: .8rem;
+    color: #777;
+}
+
+.btn-info {
+    color: #fff;
+    background-color: rgb(19, 132, 150);
+    border-color: rgb(17, 122, 139);
+}
+
+.main-body-container input[type="text"],
+.main-body-container select {
+    height: 2.5rem !important;
+    padding: 0 0.75rem;
+    font-size: 1rem;
+    box-sizing: border-box;
+    vertical-align: middle;
+}
+
+.select2-container .select2-selection--single {
+    height: 40px !important;
+    line-height: 40px !important;
+}
+
+
+#producttable th,
+#producttable td {
+    text-align: right !important;
+}
+
+div.dt-container .dt-layout-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+
+div.dt-container .dt-layout-cell.dt-layout-start {
+    order: 2;
+    margin-left: 0;
+    margin-right: auto;
+    text-align: left;
+}
+
+
+div.dt-container .dt-layout-cell.dt-layout-end {
+    order: 1;
+    margin-right: 0;
+    margin-left: auto;
+    text-align: right;
+}
+
+/*
+ ********************************custom backgrounds**********************************
+*/
+
+.bg-custom-yellow {
+    background: -webkit-gradient(linear, left top, right top, from(#feb798), to(#fe9365));
+    background: linear-gradient(to right, #feb798, #fe9365);
+}
+
+.bg-custom-green {
+    background: -webkit-gradient(linear, left top, right top, from(#0df3a3), to(#0ac282));
+    background: linear-gradient(to right, #0df3a3, #0ac282);
+}
+
+.bg-custom-pink {
+    background: -webkit-gradient(linear, left top, right top, from(#fe909d), to(#fe5d70));
+    background: linear-gradient(to right, #fe909d, #fe5d70);
+}
+
+.bg-custom-light-green {
+    background: -webkit-gradient(linear, left top, right top, from(#01dbdf), to(#01a9ac));
+    background: linear-gradient(to right, #01dbdf, #01a9ac);
+}
+
+/* input loader*/
+
+.input-loader {
+    width: 30px;
+    height: 30px;
+    border: 5px solid #bfbfbf;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: inline-block;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+
+.checkbox-span {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid black;
+    border-radius: 3px;
+    vertical-align: middle;
+    margin: 0 auto;
+}
+
+.checkbox-span.active {
+    background-color: #347433;
+    border-color: #000000;
+}
+
+.checkbox-span.inactive {
+    background-color: #eee;
+    border-color: #000000;
+}
+
+.custom-primary {
+    background-color:#9B5DE0  !important;
+    color: #fff;
+}
+

@@ -1,0 +1,326 @@
+.map_contact {
+    width: 100%;
+    height: 100%;
+}
+.contact_body {
+    height: 34rem;
+}
+.contact-page.bg-blur {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.contact-page.bg-blur::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    margin-left: 13px;
+    height: 100%;
+    background-image: url("../../assets/img/about/5124556.jpg");
+    background-size: cover;
+    background-position: center;
+    opacity: 0.9;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.hover-box:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(47, 40, 95, 0.7);
+}
+
+.hover-box {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 56px;
+}
+
+.icon-about i {
+    height: 100px;
+    width: 100px;
+    line-height: 100px;
+    border-radius: 50%;
+    background: #6a1a79;
+    color: #fff;
+    font-size: 48px;
+}
+
+.contact-box {
+    margin: 10rem;
+    overflow: hidden;
+}
+
+@media (max-width: 768px) {
+    .contact-page {
+        margin: 1rem !important;
+        overflow: hidden !important;
+        margin-top: 4rem !important;
+        z-index: -1 !important;
+    }
+
+    .about-title {
+        margin-right: 5.5rem !important;
+    }
+}
+
+.user-login-btn {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 13px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+    background: #fff;
+}
+
+/* مخفی کردن در دسکتاپ */
+.mobile-bottom-nav {
+    display: none;
+}
+
+/* فقط موبایل */
+@media (max-width: 768px) {
+    .mobile-bottom-nav {
+        display: flex;
+        position: fixed; /* مهم */
+        bottom: 0;        /* پایین صفحه */
+        left: 0;
+        width: 100%;
+        justify-content: space-around;
+        align-items: center;
+        background: #fff;
+        border-top: 1px solid #ddd;
+        padding: 5px 0;
+        z-index: 1050;  /* بالاتر از بقیه محتوا ولی پایین تر از مودال‌ها */
+    }
+
+    .mobile-bottom-nav a {
+        text-align: center;
+        font-size: 12px;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+    }
+
+    .mobile-bottom-nav i {
+        font-size: 20px;
+        margin-bottom: 2px;
+    }
+}
+
+.select2-container .select2-selection--single {
+    height: 46px !important;
+    line-height: 46px !important;
+}
+
+/* تنظیم اندازه درست Select2 داخل modal */
+.modal .select2-container {
+    width: 100% !important;
+}
+
+.modal .select2-selection--single {
+    height: 38px !important;
+    display: flex;
+    align-items: center;
+    border: 1px solid #ced4da !important;
+    border-radius: 5px;
+}
+
+.modal .select2-selection__rendered {
+    line-height: 36px !important;
+    font-size: 14px;
+    padding-left: 8px;
+}
+
+.modal .select2-selection__arrow {
+    height: 36px !important;
+}
+
+/* منوی دسکتاپ */
+.profile-menu-items a.active {
+    background-color: #f3f3f3;
+    color: #d6336c;
+    font-weight: 600;
+    border-radius: 8px;
+}
+
+/* منوی موبایل */
+.dropdown-item.active {
+    background-color: #f3f3f3;
+    color: #d6336c;
+    font-weight: 600;
+}
+
+.address-card-info {
+    border: 2px solid #e0e0e0 !important;
+    transition: all 0.3s ease;
+}
+
+.address-card-info:hover {
+    border-color: #007bff !important;
+    box-shadow: 0 0 15px rgba(0, 123, 255, 0.1);
+}
+
+main.main section.banner img {
+    border-radius: 2px !important;
+    width: 100%;
+}
+header.main-header {
+    margin-bottom: 0px !important;
+}
+
+.container {
+    max-width: 1350px !important;
+}
+
+/* ظاهر کلی سکشن */
+
+#amazing-slider .carousel-inner .carousel-item
+{
+    margin-top: 5px !important;
+}
+#amazing-slider {
+    border: 3px solid #dcdcdc; /* بوردر واضح‌تر */
+    border-radius: 18px;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    background: linear-gradient(180deg, #ffffff 0%, #f9f9f9 100%);
+    transition: all 0.3s ease-in-out;
+    /*margin-bottom: 30px;*/
+}
+
+#amazing-slider:hover {
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    transform: translateY(-3px);
+}
+
+/* لیست نام محصولات سمت راست */
+#amazing-slider .carousel-indicators {
+    background: #f3f4f7;
+    border-left: 2px solid #ddd;
+    padding: 1.2rem;
+    border-radius: 0 18px 18px 0;
+    max-height: 500px; /* برای حدود ۸ آیتم */
+    overflow-y: auto;
+}
+
+#amazing-slider .carousel-indicators li {
+    cursor: pointer;
+    padding: 10px 12px;
+    margin: 5px 0;
+    border-radius: 10px;
+    font-weight: 500;
+    color: #555;
+    font-size: 0.95rem;
+    transition: all 0.3s;
+}
+
+#amazing-slider .carousel-indicators li.active,
+#amazing-slider .carousel-indicators li:hover {
+
+    color: #fff;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+#amazing-slider .view-all a {
+    border-radius: 10px;
+    font-weight: 600;
+    background: linear-gradient(45deg, #6a11cb, #2575fc);
+    border: none;
+    color: #fff !important;
+}
+
+/* ناحیه تصویر و اطلاعات */
+#amazing-slider .carousel-item {
+    padding: 25px 30px;
+}
+
+#amazing-slider .right-col img {
+    width: 100%;
+    height: 320px; /* افزایش ارتفاع */
+    object-fit: contain;
+    border-radius: 14px;
+    background-color: #fff;
+    border: 1px solid #e3e3e3;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    padding: 10px;
+}
+
+#amazing-slider .left-col {
+    /*display: flex;*/
+    /*flex-direction: column;*/
+    justify-content: center;
+    /*background: #fefefe;*/
+    /*border-radius: 14px;*/
+    padding: 20px;
+    /*border: 1px solid #eee;*/
+    /*box-shadow: inset 0 0 10px rgba(0,0,0,0.03);*/
+}
+
+/* قیمت‌ها */
+.price {
+    margin-bottom: 10px;
+}
+
+.price del {
+    color: #888;
+    font-size: 1rem;
+    margin-left: 8px;
+}
+
+.price ins {
+    display: inline-block;
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #e74c3c;
+    text-decoration: none;
+    margin-left: 8px;
+}
+
+.discount-percent {
+    background-color: #e74c3c;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    margin-right: 10px;
+}
+
+/* نام محصول */
+.product-title a {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.product-title a:hover {
+    color: #007bff;
+}
+
+/* تایمر */
+.countdown-timer {
+    background: #f8f8f8;
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    text-align: center;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.timer-title {
+    text-align: center;
+    color: #777;
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+
+
