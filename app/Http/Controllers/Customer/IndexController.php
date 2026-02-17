@@ -419,4 +419,8 @@ class IndexController extends Controller
     }
 
 
+    public function after_sales_service($group_id=null)
+    {
+        return view('PublicPages.after_sales_service', compact('group_id'));
+    }
 }

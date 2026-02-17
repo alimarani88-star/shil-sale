@@ -36,7 +36,7 @@
             </div>
             <div class="col-lg-6 col-md-5 col-sm-8 col-7">
                 <div class="search-area default">
-                    <form class="search">
+                    <div class="search">
                         <input type="text" id="main_search"
                                placeholder="نام محصول و یا دسته مورد نظر خود را جستجو کنید…">
                         <ul class="list-group search-box-list">
@@ -83,7 +83,7 @@
                         </ul>
                         <div class="localSearchSimple"></div>
                         <button type="submit" class="custom-primary"><img src="/assets/img/search.png" alt=""></button>
-                    </form>
+                    </div>
                 </div>
             </div>
             <div class="col-md-4 col-sm-12">
@@ -192,6 +192,10 @@
                     <li class="list-item">
                         <a class=" {{request()->routeIs('register_customer') ? 'active-menu-link' : ''}}"
                            href="{{route('register_customer')}}">ثبت اطلاعات مشتریان</a>
+                    </li>
+                    <li class="list-item">
+                        <a class=" {{request()->routeIs('after_sales_service') ? 'active-menu-link' : ''}}"
+                           href="{{route('after_sales_service')}}">خدمات پس از فروش</a>
                     </li>
                 </ul>
             </nav>

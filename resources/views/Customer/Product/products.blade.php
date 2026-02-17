@@ -256,6 +256,10 @@
                                                         </div>
                                                     </li>
                                                 @endforeach
+                                            @else
+                                                <div id="no-product" class="alert alert-info d-flex flex-row justify-content-center rounded w-100 mt-4">
+                                                    <b>محصولی با این دسته بندی یافت نشد لطفا دسته دیگری را انتخاب فرمائید.</b>
+                                                </div>
                                             @endif
                                         </ul>
                                     </div>
@@ -314,22 +318,25 @@
             loadMoreProducts(init_id);
 
             $('.listing-sort a').each(function(a_index,a) {
-                let a_id = $(a).attr('href')
-                $(a_id).append(`
+                if(!$('#no-product')){
+                    let a_id = $(a).attr('href')
+                    $(a_id).append(`
                  <div class="more px-4">
                                 <button  class="loadMoreBtn mx-auto btn bg-light d-flex flex-row align-items-center justify-content-center w-100">
                                     <span class="loading-more  mx-2" ></span>
                                     <b class=" mx-2" style="font-size: 16px;color: #7a7a7a"> بارگذاری محصولات</b>
                                 </button>
                             </div>`);
-                $(a).on('click' , function() {
-                    let page = $(a_id).attr('data-page') ;
-                    if(parseInt(page) === 1){
-                        tab = a_id.replace('#','');
-                        loadMoreProducts(tab);
-                    }
+                    $(a).on('click' , function() {
+                        let page = $(a_id).attr('data-page') ;
+                        if(parseInt(page) === 1){
+                            tab = a_id.replace('#','');
+                            loadMoreProducts(tab);
+                        }
 
-                })
+                    })
+                }
+
             })
 
             $(document).on('click' ,'.loadMoreBtn' , function() {

@@ -24,3 +24,5 @@ yarn-error.log
 /.zed
 /Dockerfile
 /docker-compose.yml
+package-lock.json
+*.md
