@@ -117,6 +117,10 @@
                 <li class="list-item">
                     <a class="" href="{{ route('register_customer') }}" >ثبت اطلاعات مشتریان</a>
                 </li>
+                <li class="list-item">
+                    <a class=" {{request()->routeIs('after_sales_service') ? 'active-menu-link' : ''}}"
+                       href="{{route('after_sales_service')}}">خدمات پس از فروش</a>
+                </li>
             </ul>
         </div>
     </div>
