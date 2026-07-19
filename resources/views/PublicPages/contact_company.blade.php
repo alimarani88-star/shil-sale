@@ -10,7 +10,7 @@
     <meta name="keywords"
         content="تماس با ما شارین پارس, شارین پارس ایرانیان, تجهیزات برق اصفهان, شماره تماس شارین پارس, آدرس شارین پارس">
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="{{ url()->current() }}" />
+    <link rel="canonical" href="https://www.shil.ir/contact" />
 
     <!-- Open Graph / Social -->
     <meta property="og:type" content="website" />

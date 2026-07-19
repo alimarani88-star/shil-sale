@@ -36,7 +36,7 @@ class ProductClientController extends Controller
             'id' => '',
         ];
         if(!$category){
-            return view('Customer.Product.products', compact('dataCategory' ));
+            abort(404);
         }
 
         $main_group_id_in_app = [];
@@ -64,7 +64,7 @@ class ProductClientController extends Controller
 
         $collectIds($category);
         $products = Product::where('status', 1)
-            ->select('id', 'product_name', 'price', 'price_unit', 'main_group_id_in_app', 'group_id_in_app' , 'price','price_unit')
+            ->select('id', 'slug', 'product_name', 'price', 'price_unit', 'main_group_id_in_app', 'group_id_in_app' , 'price','price_unit')
             ->where(function ($query) use ($main_group_id_in_app, $group_id_in_app) {
                 if (!empty($main_group_id_in_app)) {
                     $query->whereIn('main_group_id_in_app', array_unique($main_group_id_in_app));
@@ -83,6 +83,7 @@ class ProductClientController extends Controller
         $dataCategory = [
             'name' => $category->name,
             'id' => $category->id,
+            'slug' => $category->slug,
         ];
 
         foreach ($products as &$product) {
@@ -144,7 +145,7 @@ class ProductClientController extends Controller
             switch ($tab) {
                 case 'new':
                     $products = Product::where('status', 1)
-                        ->select('id', 'product_name', 'price', 'price_unit', 'main_group_id_in_app', 'group_id_in_app','price','price_unit')
+                        ->select('id', 'slug', 'product_name', 'price', 'price_unit', 'main_group_id_in_app', 'group_id_in_app','price','price_unit')
                         ->where(function ($query) use ($main_group_id_in_app, $group_id_in_app) {
                             if (!empty($main_group_id_in_app)) {
                                 $query->whereIn('main_group_id_in_app', array_unique($main_group_id_in_app));
@@ -173,7 +174,7 @@ class ProductClientController extends Controller
 //                    break;
                 default:
                     $products = Product::where('status', 1)
-                        ->select('id', 'product_name', 'price', 'price_unit')
+                        ->select('id', 'slug', 'product_name', 'price', 'price_unit')
                         ->with(['images'])
                         ->paginate(24);
                     break;

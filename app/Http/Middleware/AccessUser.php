@@ -26,5 +26,5 @@ class AccessUser
             return Redirect::to('/');
         }
     }
-
+    
 }

@@ -19,5 +19,7 @@ interface ShiliranApiInterface
     public function getItemsByGroupId(int $id): array;
 
     public function getMainGroupById(int $id): array;
+
+    public function getInventoryByItemId(int $id): array;
 }
 

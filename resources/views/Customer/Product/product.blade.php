@@ -1,5 +1,7 @@
 @extends('Customer.Layout.master')
 
+@section('canonical', 'https://www.shil.ir/show_product_by_id/' . $product->slug)
+
 @section('content')
 
     <style>
@@ -155,7 +157,13 @@
 
                                     <div class="product-guarantee default">
                                         <i class="fa fa-check-circle"></i>
-                                        <p class="product-guarantee-text">گارانتی اصالت و سلامت فیزیکی کالا</p>
+                                        <p class="product-guarantee-text">
+                                            @if(!empty($guaranteeDuration))
+                                                گارانتی {{ $guaranteeDuration }} ماهه
+                                            @else
+                                                گارانتی اصالت و سلامت فیزیکی کالا
+                                            @endif
+                                        </p>
                                     </div>
                                     <div class="product-delivery-seller default">
                                         <p>
@@ -250,7 +258,7 @@
 
                             <div class="product-add default mt-3">
                                 @if(auth()->check())
-                                    @if($product->marketable > 0)
+                                    @if($product->marketable > 0 and $inventory > 0)
                                         @if($existsInCart)
                                             <button class="btn custom-danger d-block w-100 " id="remove_from_cart">
                                                 حذف از سبد خرید

@@ -221,7 +221,8 @@
         'A_report_of_exhibition_customers',
         'A_report_of_exhibition_visitors',
         'A_report_of_exhibition_visitors_by_city',
-        'A_report_of_site_customers'
+        'A_report_of_site_customers',
+        'A_generate_sitemap'
     ) ? 'menu-open' : '' }}">
 
                         <a href="#"
@@ -230,7 +231,8 @@
            'A_report_of_exhibition_customers',
            'A_report_of_exhibition_visitors',
            'A_report_of_site_customers',
-           'A_report_of_exhibition_visitors_by_city'
+           'A_report_of_exhibition_visitors_by_city',
+           'A_generate_sitemap'
        ) ? 'active' : '' }}">
                             <i class="fa fa-pie-chart" aria-hidden="true"></i>
                             <p>
@@ -294,7 +296,22 @@
                                 </a>
                             </li>
 
+                            <li class="nav-item">
+                                <a href="{{ route('A_report_of_orders') }}"
+                                   class="nav-link {{ request()->routeIs('A_report_of_orders') ? 'active' : '' }}">
+                                    <p>سفارش ها</p>
+                                </a>
+                            </li>
+
                         </ul>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('A_generate_sitemap') }}"
+                           class="nav-link {{ request()->routeIs('A_generate_sitemap') ? 'active' : '' }}">
+                            <i class="fa fa-sitemap nav-icon"></i>
+                            <p>تولید Sitemap</p>
+                        </a>
                     </li>
 
                     <li class="nav-item">

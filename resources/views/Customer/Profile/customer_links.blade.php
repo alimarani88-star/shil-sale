@@ -15,7 +15,7 @@
                     <p>جهت دریافت فایل ها روی لینک مورد نظر کلیک نمایید</p>
                 </div>
 
-
+               
 
                 <!-- کارت لیست قیمت -->
                 <div class="col-md-6 col-lg-4 mb-4">
@@ -55,7 +55,7 @@
                     </a>
                 </div>
 
-                <!-- کارت اینستاگرام -->
+                 <!-- کارت اینستاگرام -->
                 <div class="col-md-6 col-lg-4 mb-4">
                     <a href="https://www.instagram.com/shiliran?r=nametag" target="_blank" class="card-download text-decoration-none">
                         <div class="card shadow-sm h-100">

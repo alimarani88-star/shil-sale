@@ -32,9 +32,10 @@ class SendSMS implements ShouldQueue
      * Execute the job.
      */
     public function handle(): void
-
+    //public function handle(): void
     {
         Log::info('start job send SMS');
         SmsIr::verifySend($this->mobile, $this->templateId, $this->parameters);
+
     }
 }

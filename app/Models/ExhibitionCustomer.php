@@ -21,6 +21,8 @@ class ExhibitionCustomer extends Model
         'city_id',
         'city_name',
         'company_name',
+        'raffle_participate',
+        'raffle_company_number',
         'exhibition_name',
         'description',
         'status',

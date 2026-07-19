@@ -6,7 +6,7 @@
           content="حریم خصوصی کاربران وب‌سایت شیل ایران، نحوه جمع‌آوری، استفاده و محافظت از اطلاعات شخصی شما. امنیت، شفافیت و احترام به حریم خصوصی کاربران اولویت ماست.">
     <meta name="keywords"
           content="حریم خصوصی, شیل ایران, امنیت اطلاعات, وب‌سایت فروشگاهی, اطلاعات شخصی, حفاظت از داده">
-    <link rel="canonical" href="{{ url()->current() }}"/>
+    <link rel="canonical" href="https://www.shil.ir/privacy"/>
 @endsection
 
 @section('content')

@@ -6,7 +6,7 @@
           content="پاسخ به سوالات متداول درباره محصولات و خدمات شرکت شیل ایران">
     <meta name="keywords"
           content="سوالات متداول, پرسش و پاسخ, شیل ایران, FAQ">
-    <link rel="canonical" href="{{ url()->current() }}"/>
+    <link rel="canonical" href="https://www.shil.ir/frequently_asked_questions"/>
 @endsection
 
 @section('content')
@@ -158,9 +158,9 @@
             gap: 20px;
         }
 
-        
 
-     
+
+
 
         @keyframes fadeInUp {
             from {
@@ -204,7 +204,7 @@
             flex: 1;
         }
 
-       
+
 
         .question-text {
             color: #fff;
@@ -212,7 +212,7 @@
             font-weight: 500;
         }
 
-        
+
 
         .faq-answer {
             max-height: 0;

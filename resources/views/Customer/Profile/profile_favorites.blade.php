@@ -47,7 +47,7 @@
 
                                                 <div class="col-12 text-left mb-3">
                                                     <a class="btn  custom-primary"
-                                                       href="{{ route('show_product_by_id', $product->id) }}">
+                                                       href="{{ route('show_product_by_id', $product->slug ?: $product->id) }}">
                                                         مشاهده محصول
                                                     </a>
                                                 </div>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa-IR">
 
 <head>
     @yield('meta')
@@ -30,26 +30,27 @@
     <!-- footer -->
 </div>
 
+@include('Customer.Layout.online-support')
+
 @include('Customer.Layout.script')
 @yield('script')
 
 @include('Customer.Alerts.Sweetalert.error')
 @include('Customer.Alerts.Sweetalert.success')
 
-<!-- ثبت سرویس ورکر -->
+ <!-- ثبت سرویس ورکر -->
 
-<!-- <script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js')
-                .then(reg => console.log('Service Worker ثبت شد', reg))
-                .catch(err => console.log('خطا در ثبت SW', err));
-        });
-    }
-</script> -->
+    <!-- <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker ثبت شد', reg))
+                    .catch(err => console.log('خطا در ثبت SW', err));
+            });
+        }
+    </script> -->
 
 
 
 </body>
 </html>
-

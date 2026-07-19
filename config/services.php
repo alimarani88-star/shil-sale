@@ -41,8 +41,15 @@ return [
         'cert'     => env('SHILIRAN_CERT',storage_path('certs/cacert.pem')),
     ],
 
-    'postex' => [
-        'api_key' => env('POSTX_API_KEY'),
-    ]
+    'bmi' => [
+        'terminal_id' => env('BMI_TERMINAL_ID'),
+        'merchant_id' => env('BMI_MERCHANT_ID'),
+        'key' => env('BMI_KEY'),
+        'callback_url' => env('BMI_CALLBACK_URL'),
+        'verify_ssl' => env('BMI_VERIFY_SSL', true),
+        'request_url' => env('BMI_REQUEST_URL', 'https://sadad.shaparak.ir/vpg/api/v0/Request/PaymentRequest'),
+        'verify_url' => env('BMI_VERIFY_URL', 'https://sadad.shaparak.ir/vpg/api/v0/Advice/Verify'),
+        'purchase_url' => env('BMI_PURCHASE_URL', 'https://sadad.shaparak.ir/VPG/Purchase'),
+    ],
 
 ];

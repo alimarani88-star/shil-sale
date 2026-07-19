@@ -18,7 +18,8 @@ use Inertia\Inertia;
 //Route::get('/', function () {return Inertia::render('welcome');})->name('home');
 
 Route::get('/', [IndexController::class, 'home'])->name('home');
-Route::get('/show_product_by_id/{id}', [IndexController::class, 'show_product_by_id'])->name('show_product_by_id');
+Route::get('/show_product_by_id/{id}', [IndexController::class, 'redirect_product_by_id'])->where('id', '[0-9]+')->name('show_product_by_id_legacy');
+Route::get('/show_product_by_id/{slug}', [IndexController::class, 'show_product_by_id'])->name('show_product_by_id');
 
 
 // products routes
@@ -105,6 +106,9 @@ Route::middleware(['auth', 'verified', 'AccessUser'])->group(function () {
     Route::get('/A_edit_about', [SettingController::class, 'A_edit_about'])->name('A_edit_about');
     Route::get('/A_edit_contact', [SettingController::class, 'A_edit_contact'])->name('A_edit_contact');
 
+    // sitemap
+    Route::get('/A_generate_sitemap', [\App\Http\Controllers\Admin\SitemapController::class, 'generate'])->name('A_generate_sitemap');
+
 
     Route::get('/A_edit_frequently_asked_questions', [SettingController::class, 'A_edit_frequently_asked_questions'])->name('A_edit_frequently_asked_questions');
     Route::post('/A_s_edit_frequently_asked_questions', [SettingController::class, 'A_s_edit_frequently_asked_questions'])->name('A_s_edit_frequently_asked_questions');
@@ -119,6 +123,8 @@ Route::middleware(['auth', 'verified', 'AccessUser'])->group(function () {
     Route::get('/A_report_of_exhibition_customers', [ReportController::class, 'A_report_of_exhibition_customers'])->name('A_report_of_exhibition_customers');
     Route::get('/A_report_of_site_customers', [ReportController::class, 'A_report_of_site_customers'])->name('A_report_of_site_customers');
     Route::get('/A_report_of_per_customer/{id}', [ReportController::class, 'A_report_of_per_customer'])->name('A_report_of_per_customer');
+    Route::get('/A_report_of_orders', [ReportController::class, 'A_report_of_orders'])->name('A_report_of_orders');
+    Route::get('/A_report_of_order_items/{id}', [ReportController::class, 'A_report_of_order_items'])->name('A_report_of_order_items');
     Route::get('/A_report_of_exhibition_visitors', [ReportController::class, 'A_report_of_exhibition_visitors'])->name('A_report_of_exhibition_visitors');
     Route::get('/A_report_of_exhibition_visitors_by_city', [ReportController::class, 'A_report_of_exhibition_visitors_by_city'])->name('A_report_of_exhibition_visitors_by_city');
 
@@ -181,9 +187,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/remove_from_favorites/{id}', [UserProfileController::class, 'remove_from_favorites'])->name('remove_from_favorites');
 
 
+   // Route::match(['GET', 'POST'], '/payment/bmi/callback', [CartController::class, 'bmi_callback'])->name('payment.bmi.callback');
+    //Route::post('/payment_result', [CartController::class, 'payment_result'])->name('payment_result');
 
 
 });
+
+Route::match(['GET', 'POST'], '/payment/bmi/callback', [CartController::class, 'bmi_callback'])->name('payment.bmi.callback');
+Route::match(['GET', 'POST'], '/payment1/bmi1/callback1', [CartController::class, 'bmi_callback1'])->name('payment.bmi.callback1');
+Route::get('/payment_result', [CartController::class, 'payment_result'])->name('payment_result');
+
+
 
 //add_to_favorites
 Route::post('/add_to_favorites/{id}', [IndexController::class, 'add_to_favorites'])->name('add_to_favorites');
@@ -225,12 +239,11 @@ Route::get('/ajax_register_customer', [UserProfileController::class, 'ajax_regis
 Route::post('/s_register_customer', [UserProfileController::class, 's_register_customer'])->name('s_register_customer');
 Route::get('/customer_links', [UserProfileController::class, 'customer_links'])->name('customer_links');
 
+Route::get('/product_guide', [\App\Http\Controllers\Customer\IndexController::class, 'product_guide'])->name('product_guide');
 
-
-Route::get('/product_guide/{idOrSlug}', [\App\Http\Controllers\Customer\PostClientController::class, 'product_guide'])->name('product_guide');
+//Route::get('/product_guide/{idOrSlug}', [\App\Http\Controllers\Customer\PostClientController::class, 'product_guide'])->name('product_guide');
 Route::get('/after_sales_service/{group_id}', [\App\Http\Controllers\Customer\IndexController::class, 'after_sales_service'])->name('after_sales_service');
 Route::get('/after_sales_service', [\App\Http\Controllers\Customer\IndexController::class, 'after_sales_service'])->name('after_sales_service');
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
-

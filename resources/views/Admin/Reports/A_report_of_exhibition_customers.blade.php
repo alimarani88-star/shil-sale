@@ -95,12 +95,12 @@
             border-color: #dc3545;
         }
 
-        .dt-buttons {
+        .dt-buttons{
             float: left;
             margin-bottom: 10px;
         }
 
-        .dt-search {
+        .dt-search{
             margin-bottom: 10px;
         }
     </style>
@@ -122,7 +122,7 @@
             <section class="main-body-container p-2">
                 <section class="main-body-container-header p-2">
                     <div class="d-flex flex-row align-items-baseline">
-                        <h5>گزارش مشتریان نمایشگاه</h5>
+                    <h5>گزارش مشتریان نمایشگاه</h5>
                         :
                         @if($exhibition)
                             <h4 class="p-1" style="background-color: #02ffff">{{$exhibition}}</h4>
@@ -202,12 +202,12 @@
     <script src="{{asset('admin-assets/datatable/export/jszip.min.js')}}"></script>
     <script src="{{asset('admin-assets/datatable/export/buttons.html5.min.js')}}"></script>
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             var table = $('#producttable').DataTable({
                 language: {
                     url: "{{ asset('admin-assets/datatable/farsi.json') }}"
                 },
-                pageLength: 100,
+                pageLength: 1000,
                 lengthMenu: [10, 25, 50, 100, 1000],
                 dom: 'Bfrtip',
                 buttons: [
@@ -215,12 +215,12 @@
                         extend: 'excelHtml5',
                         text: 'خروجی اکسل',
                         className: 'btn btn-success'
-                    }
+                    },
                 ]
             });
 
             // سرچ در هر ستون
-            $('.column-search').on('keyup change', function() {
+            $('.column-search').on('keyup change', function () {
                 let columnIndex = $(this).data('column');
                 let value = $(this).val();
                 table.column(columnIndex).search(value).draw();

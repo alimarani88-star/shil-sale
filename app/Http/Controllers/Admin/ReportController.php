@@ -6,6 +6,9 @@ use App\CustomClass\Jdf;
 use App\Http\Controllers\Controller;
 use App\Models\ExhibitionCustomer;
 use App\Models\User;
+use App\Models\UserProfile;
+use App\Models\Order;
+use App\Models\OrderItem;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
@@ -17,12 +20,12 @@ class ReportController extends Controller
         $city = $request->query('city');
 
         if($exhibition){
-            $customersInfo = ExhibitionCustomer::where('exhibition_name', $exhibition)->get();
+            $customersInfo = ExhibitionCustomer::where('exhibition_name', $exhibition)->latest()->get();
         }elseif ($city) {
-            $customersInfo = ExhibitionCustomer::where('province_name', $city)->get();
+            $customersInfo = ExhibitionCustomer::where('province_name', $city)->latest()->get();
         }
         else{
-            $customersInfo = ExhibitionCustomer::all();
+            $customersInfo = ExhibitionCustomer::latest()->get();
         }
 
         $pageTitle = 'گزارش مشتریان ' ;
@@ -46,18 +49,18 @@ class ReportController extends Controller
         ])->get();
 
 
-        return view('Admin.Reports.A_report_of_site_customers', compact('customersInfo'));
+        return view('Admin.Reports.A_report_of_site_customers',compact('customersInfo'));
     }
 
-    public function A_report_of_per_customer($id)
-    {
-        $customerInfo = User::with([
-            'profile',
-            'latestAddress.city'
-        ])->where('id', $id)->first();
+     public function A_report_of_per_customer($id)
+     {
+         $customerInfo = User::with([
+             'profile',
+             'latestAddress.city'
+         ])->where('id',$id)->first();
 
-        return view('Admin.Reports.A_report_of_per_customer', compact('customerInfo'));
-    }
+         return view('Admin.Reports.A_report_of_per_customer',compact('customerInfo'));
+     }
 
     public function A_report_of_exhibition_visitors()
     {
@@ -100,9 +103,9 @@ class ReportController extends Controller
         }
 
         $exhibition_province = $query
+            ->orderBy('province_id', 'asc')
             ->get()
             ->groupBy('province_name');
-
 
 
         foreach ($exhibition_province as $province_name => $exhibition_info) {
@@ -135,6 +138,32 @@ class ReportController extends Controller
         $years = range(1400, $y);
 
         return view('Admin.Reports.A_report_of_exhibition_visitors_by_city', compact('exhibition_by_province', 'year'  , 'years'));
+    }
+
+    public function A_report_of_orders()
+    {
+        $orders = Order::query()
+            ->latest('id')
+            ->paginate(15);
+
+        return view('Admin.Reports.A_report_of_orders',compact('orders'));
+    }
+
+    public function A_report_of_order_items(int $id)
+    {
+        $order = Order::query()
+            ->withTrashed()
+            ->findOrFail($id);
+
+        $orderItems = OrderItem::query()
+            ->with(['product.images'])
+            ->where('order_id', $id)
+            ->get();
+
+        return view(
+            'Admin.Reports.A_report_of_order_items',
+            compact('order', 'orderItems')
+        );
     }
 
 }

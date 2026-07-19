@@ -6,7 +6,7 @@
           content="آشنایی با شرکت شیل ایران، تولیدکننده تجهیزات صنعت برق با استانداردهای بین‌المللی. خدمات با کیفیت، تیم حرفه‌ای، و راه‌حل‌های خلاقانه.">
     <meta name="keywords"
           content="شیل ایران, صنعت برق, کلید مینیاتوری, کنتاکتور, کلید اتوماتیک, تولید تجهیزات برق, استاندارد IEC, شرکت برقی, تولید ملی">
-    <link rel="canonical" href="{{ url()->current() }}"/>
+    <link rel="canonical" href="https://www.shil.ir/about"/>
 @endsection
 
 @section('content')

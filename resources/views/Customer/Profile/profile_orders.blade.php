@@ -41,7 +41,7 @@
                                                                 جزییات سفارش
                                                             </a>
 
-                                                            <a href="{{ route('cart', $order->id) }}"
+                                                            <a href="{{ route('cart_payment', ['order' => $order->id]) }}"
                                                                 class="btn custom-primary btn-sm">پرداخت سفارش</a>
                                                         </td>
                                                     @else

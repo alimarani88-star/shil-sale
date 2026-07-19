@@ -20,31 +20,31 @@
             <div class="row">
                 <div class="service-item col">
                     <p href="#" target="_blank">
-                        <img src="/assets/img/svg/delivery1.svg">
+                        <img src="/assets/img/svg/delivery1.svg" alt="تحویل اکسپرس">
                     </p>
                     <p>تحویل اکسپرس</p>
                 </div>
                 <div class="service-item col">
                     <p href="#" target="_blank">
-                        <img src="/assets/img/svg/contact_us.svg">
+                        <img src="/assets/img/svg/contact_us.svg" alt="پشتیبانی ۲۴ ساعته">
                     </p>
                     <p>پشتیبانی 24 ساعته</p>
                 </div>
                 <div class="service-item col">
                     <p href="#" target="_blank">
-                        <img src="/assets/img/svg/payment_terms.svg">
+                        <img src="/assets/img/svg/payment_terms.svg" alt="پرداخت در محل">
                     </p>
                     <p>پرداخت درمحل</p>
                 </div>
                 <div class="service-item col">
                     <p href="#" target="_blank">
-                        <img src="/assets/img/svg/return_policy.svg">
+                        <img src="/assets/img/svg/return_policy.svg" alt="۷ روز ضمانت بازگشت">
                     </p>
                     <p>۷ روز ضمانت بازگشت</p>
                 </div>
                 <div class="service-item col">
                     <p href="#" target="_blank">
-                        <img src="/assets/img/svg/origin_guarantee.svg">
+                        <img src="/assets/img/svg/origin_guarantee.svg" alt="ضمانت اصل بودن کالا">
                     </p>
                     <p>ضمانت اصل بودن کالا</p>
                 </div>
@@ -151,13 +151,13 @@
         <div class="container">
             <div class="row">
                 <div class="site-description col-12 col-lg-7">
-                    <h1 class="site-title">فروشگاه اینترنتی شیل ایران، بررسی، انتخاب و خرید آنلاین</h1>
+                    <h2 class="site-title">فروشگاه اینترنتی شیل ایران، بررسی، انتخاب و خرید آنلاین</h2>
                     <p>
 
-                        شرکت شیل ایران در طول سال‌های فعالیت خود، به‌صورت مستقیم و غیرمستقیم با مجموعه‌های دولتی و خصوصی همکاری داشته است. از جمله این مجموعه‌ها می‌توان به شرکت‌های توزیع برق، تابلوسازی، صنایع مختلف، شرکت‌های ساختمانی، مترو، شرکت‌های آب و فاضلاب، مخابرات، فولاد، ذوب‌آهن، پیمانکاران برق و سایر صنایع مرتبط اشاره کرد؛ همکاری‌هایی که بیانگر اعتماد و رضایت مشتریان از کیفیت محصولات و خدمات این شرکت است.
+شرکت شیل ایران در طول سال‌های فعالیت خود، به‌صورت مستقیم و غیرمستقیم با مجموعه‌های دولتی و خصوصی همکاری داشته است. از جمله این مجموعه‌ها می‌توان به شرکت‌های توزیع برق، تابلوسازی، صنایع مختلف، شرکت‌های ساختمانی، مترو، شرکت‌های آب و فاضلاب، مخابرات، فولاد، ذوب‌آهن، پیمانکاران برق و سایر صنایع مرتبط اشاره کرد؛ همکاری‌هایی که بیانگر اعتماد و رضایت مشتریان از کیفیت محصولات و خدمات این شرکت است.
                     </p>
                 </div>
-                <div class="symbol col-12 col-lg-5">
+                 <div class="symbol col-12 col-lg-5">
                     <a referrerpolicy='origin' target='_blank' href='https://trustseal.enamad.ir/?id=677018&Code=ntE9ZP9ZpOdVXkIr9Wx3aoOS9NO9cbCs'><img referrerpolicy='origin' src='https://trustseal.enamad.ir/logo.aspx?id=677018&Code=ntE9ZP9ZpOdVXkIr9Wx3aoOS9NO9cbCs' alt='' style='cursor:pointer' code='ntE9ZP9ZpOdVXkIr9Wx3aoOS9NO9cbCs'></a>
                 </div>
 

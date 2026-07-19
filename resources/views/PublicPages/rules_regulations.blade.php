@@ -6,7 +6,7 @@
           content="قوانین و مقررات کاربران وب‌سایت شیل ایران، نحوه جمع‌آوری، استفاده و محافظت از اطلاعات شخصی شما. امنیت، شفافیت و احترام به قوانین و مقررات کاربران اولویت ماست.">
     <meta name="keywords"
           content="قوانین و مقررات, شیل ایران, امنیت اطلاعات, وب‌سایت فروشگاهی, اطلاعات شخصی, حفاظت از داده">
-    <link rel="canonical" href="{{ url()->current() }}"/>
+    <link rel="canonical" href="https://www.shil.ir/rules_regulations"/>
 @endsection
 
 @section('content')

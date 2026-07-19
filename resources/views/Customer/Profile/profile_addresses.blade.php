@@ -21,8 +21,7 @@
                                 @forelse($addresses as $address)
                                     <div class="col-md-12 col-sm-12">
                                         <div class="profile-recent-fav-row">
-                                            <div
-                                                class="card address-card shadow-sm border rounded p-3 address-card-info">
+                                            <div class="card address-card shadow-sm border rounded p-3 address-card-info">
                                                 <div class="d-flex justify-content-between align-items-start">
                                                     <div>
                                                         <h6 class="mb-2 text-primary">
@@ -259,20 +258,16 @@
 @section('script')
 
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             @if ($errors->any())
-            $('#addAddressModal').modal({ backdrop: 'static', keyboard: false }).modal('show');
+            $('#addAddressModal').modal({backdrop: 'static', keyboard: false}).modal('show');
             @endif
 
-            @if($addresses->isEmpty())
-            $('#addAddressModal').modal({ backdrop: 'static', keyboard: false }).modal('show');
-            @endif
+            $('.select2').select2({placeholder: "انتخاب کنید", width: '100%', allowClear: true, dir: "rtl"});
+            $('#province').select2({dropdownParent: $('#addAddressModal'), dir: "rtl"});
+            $('#city').select2({dropdownParent: $('#addAddressModal'), dir: "rtl"});
 
-            $('.select2').select2({ placeholder: 'انتخاب کنید', width: '100%', allowClear: true, dir: 'rtl' });
-            $('#province').select2({ dropdownParent: $('#addAddressModal'), dir: 'rtl' });
-            $('#city').select2({ dropdownParent: $('#addAddressModal'), dir: 'rtl' });
-
-            $('#addAddressForm').on('submit', function(e) {
+            $('#addAddressForm').on('submit', function (e) {
                 e.preventDefault();
                 const $form = $(this);
                 const action = $form.attr('action');
@@ -283,13 +278,9 @@
                     url: action,
                     type: 'POST',
                     data: $form.serialize(),
-                    headers: { 'X-CSRF-TOKEN': $form.find('input[name=_token]').val() },
-                    success: function(res) {
+                    headers: {'X-CSRF-TOKEN': $form.find('input[name=_token]').val()},
+                    success: function (res) {
                         $('#addAddressModal').modal('hide');
-
-                        @if (session('to_url'))
-                        window.location.href = "/{{ session('to_url') }}";
-                        @endif
 
                         Swal.fire({
                             toast: true,
@@ -305,7 +296,7 @@
                             location.reload();
                         });
                     },
-                    error: function(xhr) {
+                    error: function (xhr) {
                         if (xhr.status === 422) {
                             const errors = xhr.responseJSON?.errors || {};
                             Object.entries(errors).forEach(([name, msgs]) => {
@@ -314,7 +305,7 @@
                                 const $container = $field.closest('.form-account-row, .mb-3, .col-md-4');
                                 $('<span class="alert_required bg-danger text-white p-1 rounded d-inline-block mt-1" role="alert"><strong>' + message + '</strong></span>').appendTo($container);
                             });
-                            $('#addAddressModal').modal({ backdrop: 'static', keyboard: false }).modal('show');
+                            $('#addAddressModal').modal({backdrop: 'static', keyboard: false}).modal('show');
                         } else {
                             Swal.fire({
                                 icon: 'error',
@@ -328,7 +319,7 @@
                 });
             });
 
-            $(function() {
+            $(function () {
                 const $modal = $('#addAddressModal');
                 const $form = $('#addAddressForm');
 
@@ -340,13 +331,13 @@
                 }
 
 
-                $modal.on('show.bs.modal', function() {
+                $modal.on('show.bs.modal', function () {
                     if ($form.find('.alert_required').length) return;
                     resetForm();
                 });
 
 
-                $modal.on('hidden.bs.modal', function() {
+                $modal.on('hidden.bs.modal', function () {
                     resetForm();
                 });
 
@@ -362,10 +353,10 @@
         }
 
         function get_cities() {
-            const province_id = $('#province').val();
+            const province_id = $("#province").val();
             if (!province_id) return;
             $.ajax({
-                url: '/ajax_register_customer', type: 'GET', data: { province_id }, success: function(response) {
+                url: "/ajax_register_customer", type: "GET", data: {province_id}, success: function (response) {
                     console.log(response);
                     if (response.status === 'success') {
                         add_cities(response.data);
@@ -378,7 +369,7 @@
                             timer: 2000
                         });
                     }
-                }, error: function() {
+                }, error: function () {
                     Swal.fire({
                         icon: 'error',
                         title: 'SHILIRAN',
@@ -391,8 +382,8 @@
         }
 
         function add_cities(dataArray) {
-            const $select = $('#city');
-            $select.empty().append(new Option('انتخاب شهر', ''));
+            const $select = $("#city");
+            $select.empty().append(new Option("انتخاب شهر", ""));
             if (Array.isArray(dataArray)) {
                 dataArray.forEach(item => {
                     $select.append(new Option(item.title, item.id));
@@ -406,14 +397,14 @@
             }
         }
 
-        $(document).on('click', '.btn-edit-address', function() {
+        $(document).on('click', '.btn-edit-address', function () {
             var url = $(this).attr('data-url');
 
             console.log(url);
             $.ajax({
                 url: url,
                 type: 'GET',
-                success: function(response) {
+                success: function (response) {
                     if (response.status === 'success') {
                         const data = response.data;
 
@@ -439,7 +430,7 @@
                         }, 300);
                     }
                 },
-                error: function() {
+                error: function () {
                     Swal.fire({
                         icon: 'error',
                         title: 'خطا',
@@ -449,7 +440,7 @@
             });
         });
 
-        $(document).on('click', '.btn-delete-address', function() {
+        $(document).on('click', '.btn-delete-address', function () {
             console.log('khosro');
             var url = $(this).attr('data-url');
             var row = $(this).closest('.profile-recent-fav-row');
@@ -461,17 +452,17 @@
                 cancelButtonText: 'خیر',
                 reverseButtons: true,
                 confirmButtonColor: '#d33',
-                cancelButtonColor: '#777'
+                cancelButtonColor: '#777',
             }).then((result) => {
-                console.log(result.value);
-                if (result.value) {
+                    console.log(result.value);
+                if (result.value ) {
                     $.ajax({
                         url: url,
                         type: 'POST',
                         data: { _token: '{{ csrf_token() }}' },
-                        success: function(result) {
+                        success: function (result) {
                             if (result.status === 'success') {
-                                row.fadeOut(300, function() {
+                                row.fadeOut(300, function () {
                                     $(this).remove();
                                 });
 

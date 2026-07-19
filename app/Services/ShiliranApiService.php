@@ -99,4 +99,9 @@ class ShiliranApiService implements ShiliranApiInterface
     {
         return $this->request("api_get_main_group_by_id/{$id}");
     }
+
+    public function getInventoryByItemId(int $id): array
+    {
+        return $this->request("api_get_inventory_by_item_id/{$id}");
+    }
 }

@@ -32,8 +32,11 @@ export default function Register() {
     };
 
     return (
-        <AuthLayout title="ساخت حساب کاربری" description="برای ایجاد حساب کاربری خود، اطلاعات زیر را وارد کنید">
-            <Head title="ثبت نام" />
+        <AuthLayout title="Create an account" description="Enter your details below to create your account">
+            <Head title="ثبت نام">
+                <meta name="robots" content="noindex, follow" />
+                <link rel="canonical" href="https://www.shil.ir/register" />
+            </Head>
             <form className="flex flex-col gap-6" onSubmit={submit}>
                 <div className="grid gap-6">
                     <div className="grid gap-2">
@@ -103,14 +106,14 @@ export default function Register() {
 
                     <Button type="submit" className="mt-2 w-full" tabIndex={5} disabled={processing}>
                         {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                        ساخت حساب کاربری
+                        Create account
                     </Button>
                 </div>
 
                 <div className="text-muted-foreground text-center text-sm">
-                    آیا حساب کاربری دارید؟{' '}
+                    Already have an account?{' '}
                     <TextLink href={route('login')} tabIndex={6}>
-                        ورود
+                        Log in
                     </TextLink>
                 </div>
             </form>

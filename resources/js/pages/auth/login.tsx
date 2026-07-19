@@ -75,7 +75,10 @@ export default function Login({ status, canResetPassword, success, error }: Logi
 
     return (
         <AuthLayout title="ورود به حساب کاربری" description="نام کاربری و کلمه عبور خود را وارد نمایید">
-            <Head title="Log in" />
+            <Head title="Log in">
+                <meta name="robots" content="noindex, follow" />
+                <link rel="canonical" href="https://www.shil.ir/login" />
+            </Head>
 
             <form className="flex flex-col gap-6" onSubmit={submit}>
                 <div className="grid gap-6">
@@ -145,6 +148,7 @@ export default function Login({ status, canResetPassword, success, error }: Logi
                     </TextLink>
                 </div>
             </form>
+            {/*{status && <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>}*/}
         </AuthLayout>
     );
 }

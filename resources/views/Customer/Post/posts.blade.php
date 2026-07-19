@@ -1,5 +1,7 @@
 @extends('Customer.Layout.master')
 
+@section('canonical', 'https://www.shil.ir/posts')
+
 @section('head-tag')
     <link rel="stylesheet" href="{{asset('assets/post_assets/css/font-icons.css')}}"/>
     <link rel="stylesheet" href="{{asset('assets/post_assets/css/style.css')}}"/>
@@ -162,4 +164,3 @@
     <script src="{{asset('assets/post_assets/js/modernizr.min.js')}}"></script>
     <script src="{{asset('assets/post_assets/js/scripts.js')}}"></script>
 @endsection
-

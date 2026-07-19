@@ -167,7 +167,7 @@
                 });
 
                 setTimeout(function () {
-                    window.location.href = "{{ route('login') }}"; 
+                    window.location.href = "{{ route('login') }}";
                 }, 3500);
             });
         </script>

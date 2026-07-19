@@ -178,7 +178,7 @@
                                 <tr class="province-group-{{ $groupColor }} same-province-{{ $loop->parent->index }}
                                     {{ $i === 0 ? 'first-row-in-group' : '' }}
                                     {{ $i === ($rowspan - 1) ? 'last-row-in-group' : '' }}"
-                                    data-province="{{ !empty($province) ? $province : 'نامشخص' }}"
+                                    data-province="{{ !empty($province) ? $province : 'ثبت نشده' }}"
                                     data-exhibition="{{ $exhibition_name }}"
                                     data-visit="{{ $data['visit'] }}">
 
@@ -187,7 +187,7 @@
                                             <div
                                                 class="d-flex flex-column align-items-center justify-content-center h-100">
                                                 <span
-                                                    style="font-size: 1.2rem;">{{ !empty($province) ? $province : 'نامشخص' }}</span>
+                                                    style="font-size: 1.2rem;">{{ !empty($province) ? $province : 'ثبت نشده' }}</span>
                                                 <span class="exhibition-count-badge mt-2">
                                                     {{ $rowspan }} نمایشگاه
                                                 </span>

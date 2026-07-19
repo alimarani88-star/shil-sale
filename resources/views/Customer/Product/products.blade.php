@@ -1,4 +1,16 @@
 @extends('Customer.Layout.master')
+
+@section('title', isset($dataCategory) && !empty($dataCategory['name']) ? 'خرید ' . $dataCategory['name'] . ' شیل ایران | قیمت و مشخصات' : 'خرید محصولات برق صنعتی شیل ایران | قیمت و مشخصات')
+@section('canonical', isset($dataCategory) && !empty($dataCategory['slug']) ? 'https://www.shil.ir/products_category/' . $dataCategory['slug'] : 'https://www.shil.ir/products')
+
+@section('meta')
+    @if(isset($dataCategory) && !empty($dataCategory['name']))
+        <meta name="description" content="خرید {{ $dataCategory['name'] }} شیل ایران با مشاهده قیمت، مشخصات فنی و امکان ثبت سفارش آنلاین در فروشگاه محصولات برق صنعتی شیل ایران.">
+    @else
+        <meta name="description" content="خرید محصولات برق صنعتی شیل ایران شامل کلید مینیاتوری، محافظ جان، کنتاکتور و تجهیزات تابلو برق با مشاهده قیمت و مشخصات فنی.">
+    @endif
+@endsection
+
 @section('head-tag')
     <style>
         .tab-pane{
@@ -40,6 +52,11 @@
             max-width: 100%!important;
             aspect-ratio: 1 / 1;
             object-fit: cover;
+        }
+
+        .listing .el-product-card {
+            border: 1px solid #6a1b9a;
+            box-sizing: border-box;
         }
 
     /*    side filter*/
@@ -187,6 +204,14 @@
 
                         </div>
                         <div class="listing default">
+                            <h1 class="text-center my-4" style="font-size: 2.2rem;">
+                                @if(isset($dataCategory) && !empty($dataCategory['name']))
+                                    خرید {{ $dataCategory['name'] }} شیل ایران
+                                @else
+                                    خرید محصولات برق صنعتی شیل ایران
+                                @endif
+                            </h1>
+
                             <div class="listing-header default">
                                 <ul class="listing-sort nav nav-tabs justify-content-center" role="tablist"
                                     data-label="مرتب‌سازی بر اساس :">
@@ -225,13 +250,13 @@
                                                     <li class="col-xl-3 col-lg-4 col-md-6 col-12 no-padding">
                                                         <div class="el-product-card">
                                                             <div class="el-product-thumbnail">
-                                                                <a href="{{route('show_product_by_id' , ["id"=>$product['id']])}}">
-                                                                    <img src="{{$product['mainImage'] ? $product['mainImage'] : asset('assets/img/no-image.jpg')}}" class="img-fluid"  alt="${item.product_name}">
+                                                                <a href="{{ route('show_product_by_id', ($product['slug'] ?? null) ?: $product['id']) }}">
+                                                                    <img src="{{$product['mainImage'] ? $product['mainImage'] : asset('assets/img/no-image.jpg')}}" class="img-fluid"  alt="خرید {{ $product['product_name'] }} از شیل ایران">
                                                                 </a>
                                                             </div>
                                                             <div class="el-product-card-body">
                                                                 <div class="el-product-title">
-                                                                    <h6><a href="{{route('show_product_by_id' , ["id"=>$product['id']])}}">{{$product['product_name']}}</a></h6>
+                                                                    <h6><a href="{{ route('show_product_by_id', ($product['slug'] ?? null) ?: $product['id']) }}">{{$product['product_name']}}</a></h6>
                                                                 </div>
                                                                 <div class="el-product-info">
                                                                     <div class="el-product-status"><i class="fad fa-box-check"></i> موجود در انبار</div>
@@ -241,7 +266,7 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="el-product-price">
-                                                                    <span class="el-price-value">{{$product['price']}}</span>
+                                                                    <span class="el-price-value">{{number_format($product['price'])}}</span>
                                                                     <span class="el-price-currency">{{$product['price_unit']}}</span>
                                                                 </div>
                                                             </div>
@@ -250,7 +275,7 @@
                                                                     <i class="fad fa-store-alt"></i>
                                                                     <span class="el-product-seller-details-label">فروشنده:</span>
                                                                     <span class="el-product-seller-details--name">شیل ایران</span>
-                                                                    <img src="{{asset('assets/img/logo-icon.png')}}" class="el-product-seller-details--logo-small" alt="seller-details--logo-small">
+                                                                    <img src="{{asset('assets/img/logo-icon.png')}}" class="el-product-seller-details--logo-small" alt="لوگوی فروشگاه شیل ایران">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -378,18 +403,21 @@
 
                 const notImage = '{{asset('assets/img/no-image.jpg')}}';
                 const logoImage = '{{asset('assets/img/logo-icon.png')}}';
+                const productSlug = item.slug || item.id;
+                const productUrl = `/show_product_by_id/${encodeURIComponent(productSlug)}`;
+                const formattedPrice = formatPrice(item.price);
 
                 const html = `
         <li class="col-xl-3 col-lg-4 col-md-6 col-12 no-padding">
             <div class="el-product-card">
                 <div class="el-product-thumbnail">
-                    <a href="/show_product_by_id/${item.id}">
+                    <a href="${productUrl}">
                         <img src="${mainImage ? '/get_image_by_id/' + mainImage.id : notImage}" class="img-fluid" alt="${item.product_name}">
                     </a>
                 </div>
                 <div class="el-product-card-body">
                     <div class="el-product-title">
-                        <h6><a href="/show_product_by_id/${item.id}">${item.product_name}</a></h6>
+                        <h6><a href="${productUrl}">${item.product_name}</a></h6>
                     </div>
                     <div class="el-product-info">
                         <div class="el-product-status"><i class="fad fa-box-check"></i> موجود در انبار</div>
@@ -399,7 +427,7 @@
                         </div>
                     </div>
                     <div class="el-product-price">
-                        <span class="el-price-value">${item.price}</span>
+                        <span class="el-price-value">${formattedPrice}</span>
                         <span class="el-price-currency">ریال</span>
                     </div>
                 </div>
@@ -418,6 +446,15 @@
             });
 
 
+        }
+        function formatPrice(value) {
+            const numericValue = Number(String(value ?? '').replace(/[^\d.-]/g, ''));
+
+            if (!Number.isFinite(numericValue)) {
+                return value ?? '';
+            }
+
+            return numericValue.toLocaleString('en-US');
         }
         function loadMoreProducts(tabId) {
 

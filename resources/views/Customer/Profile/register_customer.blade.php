@@ -1,5 +1,7 @@
 @extends('Customer.Layout.master')
 
+@section('robots', 'noindex, follow')
+
 @section('content')
     <style>
         .is-invalid {
@@ -119,7 +121,7 @@
                                                     @endforeach
                                                 </select>
 
-                                                @error('province')
+                                                @error('city')
                                                 <span
                                                     class="alert_required bg-danger text-white p-1 rounded d-inline-block mt-1"
                                                     role="alert">
@@ -164,6 +166,22 @@
                                                 @enderror
                                             </div>
                                         </div>
+                                       
+                                            <div class="col-sm-12 col-md-6">
+                                                <div class="form-account-title">شرکت در قرعه کشی</div>
+                                                <div class="form-account-row">
+                                                    <div class="d-flex align-items-center border rounded p-2" style="height: 45px; background-color: #fff;">
+                                                        <input type="checkbox" name="raffle_participate" id="raffle_participate" value="1"
+                                                               {{ old('raffle_participate') ? 'checked' : '' }}
+                                                               style="width: 22px; height: 22px; accent-color: #6f42c1; cursor: pointer;">
+                                                        <label for="raffle_participate" class="mb-0 ms-3 fw-semibold"
+                                                               style="font-size: 1rem; cursor: pointer;margin-right: 12px;">
+                                                            مایلم در قرعه کشی شرکت کنم.
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                         <div class="col-sm-12 col-md-12">
                                             <div class="form-account-title">توضیحات ( اختیاری )</div>
                                             <div class="form-account-row">

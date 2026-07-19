@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Product;
 
 class Category extends Model
 {
@@ -94,11 +95,14 @@ class Category extends Model
 
         return $result;
     }
-    public static function getTreeProduct($parent = 0, $depth = 0)
+    public static function getTreeProduct($parent = 0, $depth = 0, $activeProductMaps = null, $onlyWithActiveProducts = false)
     {
         $maxDepth = 5;
         if ($depth >= $maxDepth) {
             return [];
+        }
+        if ($onlyWithActiveProducts && $activeProductMaps === null) {
+            $activeProductMaps = self::getActiveProductCategoryMaps();
         }
         $categories = self::where('parent_id', $parent)
             ->where('type', 'product')
@@ -106,6 +110,19 @@ class Category extends Model
             ->get();
         $result = [];
         foreach ($categories as $category) {
+            $children = [];
+            if ($depth < 4) {
+                $children = self::getTreeProduct($category->id, $depth + 1, $activeProductMaps, $onlyWithActiveProducts);
+            }
+
+            $hasDirectActiveProducts = $onlyWithActiveProducts
+                ? self::hasDirectActiveProducts($category, $activeProductMaps)
+                : false;
+
+            if ($onlyWithActiveProducts && !$hasDirectActiveProducts && empty($children)) {
+                continue;
+            }
+
             $item = [
                 'id' => $category->id,
                 'name' => $category->name,
@@ -113,18 +130,39 @@ class Category extends Model
                 'image' => $category->image ? $category->image['id'] : null,
                 'parent_id' => $category->parent_id,
                 'depth' => $depth,
-                'has_children' => $category->children()->exists(),
+                'has_children' => !empty($children),
             ];
-            if ($item['has_children'] && $depth < 4) {
-                $item['children'] = self::getTreeProduct($category->id, $depth + 1);
-            } else {
-                $item['children'] = [];
-            }
+            $item['children'] = $children;
 
             $result[] = $item;
         }
 
         return $result;
+    }
+
+    private static function getActiveProductCategoryMaps(): array
+    {
+        $products = Product::where('status', 1)
+            ->select('main_group_id_in_app', 'group_id_in_app')
+            ->get();
+
+        return [
+            'main_ids' => $products->pluck('main_group_id_in_app')->filter()->unique()->values()->all(),
+            'group_ids' => $products->pluck('group_id_in_app')->filter()->unique()->values()->all(),
+        ];
+    }
+
+    private static function hasDirectActiveProducts(Category $category, array $activeProductMaps): bool
+    {
+        if ((string) $category->app_group_type === 'main') {
+            return in_array($category->app_id, $activeProductMaps['main_ids'], true);
+        }
+
+        if ((string) $category->app_group_type === 'group') {
+            return in_array($category->app_id, $activeProductMaps['group_ids'], true);
+        }
+
+        return false;
     }
 
 

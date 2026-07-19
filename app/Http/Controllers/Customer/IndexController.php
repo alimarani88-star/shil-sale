@@ -15,6 +15,7 @@ use App\Models\Post;
 use App\Models\Post_type;
 use App\Models\Product;
 use App\Models\Product_attributes;
+use App\Models\Guide_documents;
 
 use App\Services\GetDiscountService;
 use App\Services\ShiliranApiInterface;
@@ -22,6 +23,8 @@ use App\Services\ShiliranApiInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+
+//use Spatie\Sitemap\SitemapGenerator;
 
 class IndexController extends Controller
 {
@@ -35,7 +38,9 @@ class IndexController extends Controller
 
     public function home()
     {
-        //dd(32);
+//        SitemapGenerator::create('http://sale')
+//            ->writeToFile(public_path('sitemap.xml'));
+//        dd(44);
         $isLoggedIn = Auth::check();
         if ($isLoggedIn) {
             $user = Auth::user();
@@ -156,23 +161,42 @@ class IndexController extends Controller
         return view('app_main', compact('lastProducts', 'offerProducts', 'amazingSaleDiscount', 'topProducts' , 'category_banners'));
     }
 
-    public function show_product_by_id($id)
+    public function redirect_product_by_id($id)
     {
-//        dd($id);
+        $product = Product::select('id', 'slug')->findOrFail($id);
 
-        $product = Product::with('images')->findOrFail($id);
+        if ($product->slug) {
+            return redirect()->route('show_product_by_id', $product->slug, 301);
+        }
+
+        return $this->render_product(Product::with('images')->findOrFail($id));
+    }
+
+    public function show_product_by_id111111($slug)
+    {
+        $product = Product::with('images')
+            ->where('slug', trim((string) $slug))
+            ->firstOrFail();
+
+        return $this->render_product($product);
+    }
+
+    private function render_product1111111(Product $product)
+    {
+        $productId = $product->id;
 
         $group = $this->api->getGroupById($product->group_id_in_app);
 
-        $product_Meta = Product_attributes::where('product_id', $id)
+        $product_Meta = Product_attributes::where('product_id', $productId)
             ->where('meta_name', 'رنگ')
             ->first();
 
-        $productAttributes = Product_attributes::where('product_id', $product->id)->get();
+        $productAttributes = Product_attributes::where('product_id', $productId)->get();
+        $guaranteeDuration = $this->getGuaranteeDuration($product);
 
         //DISCOUNT
         $discountService = new GetDiscountService();
-        $discount = $discountService->getDiscount($product->id);
+        $discount = $discountService->getDiscount($productId);
 
         if ($discount['status'] == 'success') {
             $product->discount_type = $discount['data']['type'];
@@ -194,7 +218,7 @@ class IndexController extends Controller
         $cart_items = [];
         if (Auth::check()) {
             $user_id = Auth::id();
-            $cart_items = Cart::where('user_id', $user_id)->where('product_id', $id)->first();
+            $cart_items = Cart::where('user_id', $user_id)->where('product_id', $productId)->first();
             if ($cart_items) {
                 $existsInCart = true;
             }
@@ -212,7 +236,7 @@ class IndexController extends Controller
 
         //comments
 
-        $comments = Comment::Where('module', 'product')->where('process_id', $id)->Where('status', 'approved')->get();
+        $comments = Comment::Where('module', 'product')->where('process_id', $productId)->Where('status', 'approved')->get();
 
         $date = new Jdf();
         foreach ($comments as $comment) {
@@ -220,7 +244,145 @@ class IndexController extends Controller
         }
 
 
-        return view('Customer.Product.product', compact('product', 'group', 'product_Meta', 'productAttributes', 'postType', 'postStatus', 'comments', 'existsInCart', 'cart_items'));
+        return view('Customer.Product.product', compact('product', 'group', 'product_Meta', 'productAttributes', 'guaranteeDuration', 'postType', 'postStatus', 'comments', 'existsInCart', 'cart_items'));
+    }
+
+    public function show_product_by_id1111($slug)
+    {
+
+        $product = Product::with('images')
+            ->where('slug', trim((string) $slug))
+            ->firstOrFail();
+
+        $data1 = $this->api->getInventoryByItemId($product->product_id_in_app);
+       
+        if($data1['status'] == true){
+            $inventory= $data1['data'];
+        }else{
+            $inventory= 0;
+        }
+
+        return $this->render_product($product,$inventory);
+    }
+
+    public function show_product_by_id(string $slug)
+    {
+    $product = Product::query()
+        ->with('images')
+        ->where('slug', trim($slug))
+        ->firstOrFail();
+
+    $inventory = 0;
+
+    try {
+        $response = $this->api->getInventoryByItemId(
+            $product->product_id_in_app
+        );
+
+        if (
+            is_array($response) &&
+            ($response['status'] ?? false) === true
+        ) {
+            $inventory = (int) ($response['data'] ?? 0);
+        }
+    } catch (\Throwable $exception) {
+        report($exception);
+
+        $inventory = 0;
+    }
+
+       return $this->render_product($product, $inventory);
+    }
+
+    private function render_product(Product $product , $inventory)
+    {
+        $productId = $product->id;
+
+        $group = $this->api->getGroupById($product->group_id_in_app);
+
+        $product_Meta = Product_attributes::where('product_id', $productId)
+            ->where('meta_name', 'رنگ')
+            ->first();
+
+        $productAttributes = Product_attributes::where('product_id', $productId)->get();
+        $guaranteeDuration = $this->getGuaranteeDuration($product);
+
+        //DISCOUNT
+        $discountService = new GetDiscountService();
+        $discount = $discountService->getDiscount($productId);
+
+        if ($discount['status'] == 'success') {
+            $product->discount_type = $discount['data']['type'];
+            $product->productPercentage = $discount['data']['percentage'];
+        } else {
+            $product->discount_type = null;
+            $product->productPercentage = null;
+        }
+
+
+        //POST
+        $publishedPostData = $this->getPublishedPost($product);
+
+        // check exists in cart
+
+        $cart_items = [];
+
+        $existsInCart = false;
+        $cart_items = [];
+        if (Auth::check()) {
+            $user_id = Auth::id();
+            $cart_items = Cart::where('user_id', $user_id)->where('product_id', $productId)->first();
+            if ($cart_items) {
+                $existsInCart = true;
+            }
+        }
+
+
+        if ($publishedPostData) {
+            $postType = $publishedPostData['postType'];
+            $postStatus = $publishedPostData['post'];
+        } else {
+            $postType = null;
+            $postStatus = null;
+
+        }
+
+        //comments
+
+        $comments = Comment::Where('module', 'product')->where('process_id', $productId)->Where('status', 'approved')->get();
+
+        $date = new Jdf();
+        foreach ($comments as $comment) {
+            $comment->created_at_jalali = $date->toJalali($comment->created_at);
+        }
+
+
+        return view('Customer.Product.product', compact('product', 'group', 'product_Meta', 'productAttributes', 'guaranteeDuration', 'postType', 'postStatus', 'comments', 'existsInCart', 'cart_items','inventory'));
+    }
+
+
+
+    private function getGuaranteeDuration(Product $product): ?int
+    {
+        if (empty($product->product_id_in_app)) {
+            return null;
+        }
+
+        $itemData = $this->api->getItemById((int) $product->product_id_in_app);
+
+        if (($itemData['status'] ?? false) !== true) {
+            return null;
+        }
+
+        $duration = $itemData['data']['guarantee_duration'] ?? null;
+
+        if ($duration === null || $duration === '') {
+            return null;
+        }
+
+        $duration = (int) $duration;
+
+        return $duration > 0 ? $duration : null;
     }
 
     function getPublishedPost($product)
@@ -422,5 +584,94 @@ class IndexController extends Controller
     public function after_sales_service($group_id=null)
     {
         return view('PublicPages.after_sales_service', compact('group_id'));
+    }
+
+
+
+    public function product_guide11111(Request $request)
+    {
+        $group = (string)$request->query('group', '');
+        $agent = (string)$request->query('agent', '');
+        $main_group = (string)$request->query('main_group', '');
+
+        if ($group === '75' && $agent === '0040') {
+            $filePath = public_path('documents/voltage_protector_3p_040.pdf');
+
+            if (!file_exists($filePath)) {
+                abort(404, 'PDF file not found.');
+            }
+
+            return response()->file($filePath, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="voltage_protector_3p_040.pdf"',
+            ]);
+        }elseif($main_group === '4300' && $agent === '0041'){
+            return view('Customer.Guide.product_guide_support');
+        }elseif($main_group === '4400' && $agent === '0041'){
+            return view('Customer.Guide.product_guide_support');
+        }elseif($main_group === '4500' && $agent === '0041'){
+            return view('Customer.Guide.product_guide_support');
+        }elseif($group === '104' && $agent === '0034'){
+            return view('Customer.Guide.product_guide_support');
+        }elseif($main_group === '4200' && $agent === '0041'){
+            return view('Customer.Guide.product_guide_support');
+        }elseif($main_group === '5100'){
+            return view('Customer.Guide.product_guide_support');
+        }elseif($group === '87'){
+            return view('Customer.Guide.product_guide_support');
+        }
+    
+
+        return view('Customer.Guide.product_guide_support');
+
+
+    }
+
+    public function product_guide(Request $request)
+    {
+        $group = (string)$request->query('group') ?? null;
+        $agent = (string)$request->query('agent', '');
+        $main_group = (string)$request->query('main_group', '');
+
+
+        if(!$group){
+           $group = null;
+        }
+        if(!$agent){
+            $agent = null;
+        }
+        if(!$main_group){
+            $main_group = null;
+        }
+
+        $guide_documents=Guide_documents::where('group_id', $group)
+            ->where('main_group_id', $main_group)
+            ->where('agent',$agent)
+            ->get();
+
+
+        if ($group === '75' && $agent === '0040') {
+            return view('Customer.Guide.product_guide_support',compact('guide_documents'));
+        }elseif($main_group === '4300' && $agent === '0041'){
+            return view('Customer.Guide.product_guide_support',compact('guide_documents'));
+        }elseif($main_group === '4400' && $agent === '0041'){
+            return view('Customer.Guide.product_guide_support',compact('guide_documents'));
+        }elseif($main_group === '4500' && $agent === '0041'){
+            return view('Customer.Guide.product_guide_support',compact('guide_documents'));
+        }elseif($group === '104' && $agent === '0034'){
+            return view('Customer.Guide.product_guide_support',compact('guide_documents'));
+        }elseif($main_group === '4200' && $agent === '0041'){
+            return view('Customer.Guide.product_guide_support',compact('guide_documents'));
+        }elseif($main_group === '5100'){
+            return view('Customer.Guide.product_guide_support',compact('guide_documents'));
+        }elseif($group === '87'){
+            return view('Customer.Guide.product_guide_support',compact('guide_documents'));
+        }elseif($group === '86'){
+            return view('Customer.Guide.product_guide_support',compact('guide_documents'));
+        }
+        
+        return view('Customer.Guide.product_guide_support');
+
+
     }
 }

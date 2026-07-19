@@ -28,6 +28,7 @@ class Product extends Model
         'created_at',
         'updated_at',
         'deleted_at',
+        'slug'
     ];
 
     public function images()
@@ -38,7 +39,7 @@ class Product extends Model
 
     public function meta()
     {
-        return $this->hasMany(Product_attributes::class);
+         return $this->hasMany(Product_attributes::class);
     }
 
 

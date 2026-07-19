@@ -30,7 +30,7 @@ class CartService
         $price_send = $this->CalculatePriceSend($default_address, $carts);
 
         if (isset($price_send['error'])) {
-            return ['error' => $price_send['error']];
+            //return ['error' => $price_send['error']];
         }
 
         [$totalPrice, $amountPayable, $totalProfit] = $this->calculateCartTotals($carts);
@@ -41,9 +41,12 @@ class CartService
             'carts' => $carts ?? null,
             'price_send' => $price_send['total_cost'] ?? 1000,
             'totalPrice' => $amountPayable ?? null,
-            'amountPayable' => $amountPayable + $price_send['total_cost'] ?? null,
-            'serviceName' =>$price_send['shipping_prices'][0]['service_price'][0]['serviceName'],
-            'slaDays' => $this->calculateSendDate(data_get($price_send, 'shipping_prices.0.service_price.0.slaDays')),
+            //'amountPayable' => $amountPayable + $price_send['total_cost'] ?? null,
+            //'serviceName' =>$price_send['shipping_prices'][0]['service_price'][0]['serviceName'],
+            //'slaDays' => $this->calculateSendDate(data_get($price_send, 'shipping_prices.0.service_price.0.slaDays')),
+            'amountPayable' => 1000,
+            'serviceName' =>'test',
+            'slaDays' => 3,
         ];
     }
 

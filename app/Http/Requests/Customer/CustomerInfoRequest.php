@@ -24,12 +24,13 @@ class CustomerInfoRequest extends FormRequest
         return [
             'first_name'    => 'required|regex:/^[\p{L}\s]+$/u|min:2|max:30',
             'last_name'     => 'required|regex:/^[\p{L}\s]+$/u|min:2|max:30',
-            'mobile'        => 'required|regex:/^09\d{9}$/|unique:exhibition_customers,mobile',
+            'mobile'        => 'required|regex:/^09\d{9}$/',
             'province'      => 'nullable|integer',
             'city'          => 'required|integer',
             'company_name'  => 'nullable|string|max:100',
             'description'   => 'nullable|string|max:500',
             'request_agency' => 'sometimes|numeric',
+            'raffle_participate' => 'sometimes|boolean',
         ];
     }
 
@@ -42,9 +43,10 @@ class CustomerInfoRequest extends FormRequest
             'last_name.regex'     => 'نام خانوادگی فقط باید شامل حروف باشد و نمی‌تواند عدد یا علامت داشته باشد.',
             'mobile.required'     => 'وارد کردن شماره موبایل الزامی است.',
             'mobile.regex'        => 'شماره موبایل باید با 09 شروع شده و شامل 11 رقم باشد.',
-            'mobile.unique'       => 'این شماره موبایل قبلاً ثبت شده است.',
             'province.integer'    => 'شناسه استان معتبر نیست.',
             'city.integer'        => 'شناسه شهر معتبر نیست.',
+            'city.required'        => 'انتخاب شهر الزامی هست',
+            'raffle_participate.sometimes' => 'انتخاب قرعه کشی',
         ];
     }
 
@@ -52,6 +54,7 @@ class CustomerInfoRequest extends FormRequest
     {
         $this->merge([
             'mobile' => convertPersianToEnglish($this->mobile),
+            'raffle_participate' => $this->has('raffle_participate') ? 1 : 0,
         ]);
     }
 

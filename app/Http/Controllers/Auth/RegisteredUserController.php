@@ -64,7 +64,7 @@ class RegisteredUserController extends Controller
             ]
         ];
         //  Log::info('Sending SMS to ' . $mobile . ' with code ' . $code4);
-        SendSMS::dispatch($mobile, $templateId, $parameters);
+       SendSMS::dispatch($mobile, $templateId, $parameters);
 
         if ($request->header('X-Inertia')) {
             return Inertia::location(route('mobile_number_verification'));

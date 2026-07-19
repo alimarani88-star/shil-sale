@@ -19,8 +19,6 @@ return [
     'trash' => 'زباله دان',
     'published' => 'منتشر شده',
     'product' => 'محصول',
-    'category' => 'عمومی',
-    'guide' => 'راهنمای محصول',
-
+    'Category' => 'عمومی',
 
 ];

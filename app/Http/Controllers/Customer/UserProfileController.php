@@ -422,6 +422,34 @@ class UserProfileController extends Controller
     {
         $inputs = $request->safe()->all();
 
+        $exhibition_name= 'نمایشگاه بهمن 1404 - مشهد';
+
+        $check=ExhibitionCustomer::where('exhibition_name',$exhibition_name)->where('mobile' , $inputs['mobile'])->first();
+        if($check != null){
+
+            // return redirect()
+            // ->route('register_customer')
+            // ->with('error', 'شما قبلا در این نمایشگاه با این شماره موبایل ثبت نام شده اید');
+
+            return redirect()->back()->with('error', 'شما قبلا در این نمایشگاه با این شماره موبایل ثبت نام شده اید');
+
+        }
+
+
+
+        $raffleParticipate = (int)($inputs['raffle_participate'] ?? 0) === 1;
+        $raffleNumber = null;
+        if ($raffleParticipate) {
+            $maxNumber = ExhibitionCustomer::whereNotNull('raffle_company_number')
+                ->selectRaw('MAX(CAST(raffle_company_number AS UNSIGNED)) as max_number')
+                ->value('max_number');
+            $raffleNumber = ((int)$maxNumber) + 1;
+        }
+
+        $date = new Jdf();
+        $now = now();
+        [$jalaliYear, $jalaliMonth] = $date->gregorian_to_jalali($now->year, $now->month, $now->day);
+
         $city = null;
         $province = null;
         $registrant_name = 'بازدید کننده';
@@ -447,32 +475,48 @@ class UserProfileController extends Controller
             'city_id' => $city?->id,
             'city_name' => $city?->title,
             'company_name' => $inputs['company_name'],
-            'exhibition_name' => 'نمایشگاه آبان 1404 - تهران',
+            'raffle_participate' => $raffleParticipate ? 1 : 0,
+            'raffle_company_number' => $raffleNumber,
+            'exhibition_name' => $exhibition_name,
             'description' => $inputs['description'] ?? null,
             'request_agency' => ($inputs['request_agency'] ?? 0) == 1 ? 1 : 0,
             'registrant_name' => $registrant_name,
+            'year' => $jalaliYear,
+            'month' => $jalaliMonth,
         ];
 
         ExhibitionCustomer::create($data);
 
         $mobile = $inputs['mobile'];
-
         $templateId = 634987;
-
-
         $parameters = [
             [
                 "name" => "NAME",
                 "value" => $inputs['last_name']
             ]
         ];
-
         SendSMS::dispatch($mobile, $templateId, $parameters);
 
-        return redirect()
-            ->route('register_customer')
-            ->with('success', 'اطلاعات شما با موفقیت ثبت شد. آدرس لیست قیمت و کاتالوگ‌ها برای شما ارسال خواهد شد.');
+        if($raffleParticipate){
+            $mobile = $inputs['mobile'];
+            $templateId = 345201;
+            $parameters = [
+                [
+                    "name" => "CODE",
+                    "value" => $raffleNumber
+                ]
+            ];
+            SendSMS::dispatch($mobile, $templateId, $parameters);
+        }
+
+        return redirect()->back()->with('success', 'اطلاعات شما با موفقیت ثبت شد. آدرس لیست قیمت و کاتالوگ‌ها برای شما ارسال خواهد شد.');
+
+        // return redirect()
+        //     ->route('register_customer')
+        //     ->with('success', 'اطلاعات شما با موفقیت ثبت شد. آدرس لیست قیمت و کاتالوگ‌ها برای شما ارسال خواهد شد.');
     }
+
+
 
 
     public function customer_links()
@@ -482,7 +526,7 @@ class UserProfileController extends Controller
 
 
 
-    
+
     public function order_detail(Request $request)
     {
         $validated = $request->validate([

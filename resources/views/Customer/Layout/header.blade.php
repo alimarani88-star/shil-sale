@@ -28,7 +28,7 @@
         <div class="row">
             <div class="col-lg-2 col-md-3 col-sm-4 col-5">
                 <div class="logo-area default">
-                    <a href="#">
+                    <a href="{{ route('home') }}">
                         <img src="/assets/img/shiliran-logo-purple-143x36.svg" alt="">
                         {{-- <h3>SHILIRAN</h3> --}}
                     </a>
@@ -474,67 +474,4 @@
         });
     });
 </script>
-@if(auth()->check())
-
-    <script>
-        document.addEventListener('DOMContentLoaded' , function(){
-            $(document).ready(function() {
-                $.ajax({
-                    type: 'GET',
-                    url: '{{ route("ajax_cart_header") }}',
-                    success: function(response) {
-                        $('.count-cart').text(response.count);
-                        let formatted = response.totalPrice.toLocaleString('en-US');
-                        $('.total-price').text(formatted);
-
-                        const basketList = $('.basket-list');
-                        basketList.empty();
-
-                        if (response.cart.length === 0) {
-                            basketList.append('<li class="text-center py-2 text-muted">سبد خرید خالی است</li>');
-                            return;
-                        }
-
-                        response.cart.forEach(item => {
-                            let image = '/assets/img/default.jpg';
-                            if (item.product.images.length > 0) {
-                                const imageId = item.product.images[0].id;
-                                image = `/get_image_by_id/${imageId}`;
-                            }
-
-                            const html = `
-                    <li>
-                        <a href="#" class="basket-item">
-                            <button class="basket-item-remove" data-id="${item.id}"></button>
-                            <div class="basket-item-content">
-                                <div class="basket-item-image">
-                                    <img src="${image}" alt="">
-                                </div>
-                                <div class="basket-item-details">
-                                    <div class="basket-item-title">${item.product.product_name}</div>
-                                    <div class="basket-item-params">
-                                        <div class="basket-item-props">
-                                            <span style="margin-left: 1rem;">${item.count} عدد</span>
-                                            <span style="color:red">${item.duscount_name}</span>
-                                            <span style="color:red">${item.percentage}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </li>`;
-                            basketList.append(html);
-                        });
-                    },
-                    error: function() {
-                        console.log('Error loading cart header');
-                    }
-                });
-            });
-        })
-
-    </script>
-
-@endif
-
 

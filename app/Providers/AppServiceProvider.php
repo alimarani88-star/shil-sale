@@ -16,7 +16,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(ShiliranApiInterface::class, ShiliranApiService::class);
+       $this->app->bind(ShiliranApiInterface::class, ShiliranApiService::class);
     }
 
     /**
@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
     {
         View::composer(['Customer.Layout.header', 'Customer.Layout.navbar','Customer.Product.products'], function ($view) {
             $mainMenuItems = Cache::remember('categories_menu', 3600, function () {
-                return Category::getTreeProduct();
+                return Category::getTreeProduct(0, 0, null, true);
             });
             $view->with('categories', $mainMenuItems);
         });

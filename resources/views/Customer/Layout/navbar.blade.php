@@ -16,7 +16,7 @@
     <div class="container">
         <div class="navbar-translate">
             <a class="navbar-brand" href="#pablo">
-                <img src="/assets/img/shiliran-logo-purple-143x36.svg" height="30px" alt="">
+                <img src="/assets/img/shiliran-logo-purple-143x36.svg" height="30px" alt="شیل ایران" onclick="window.location.href='{{ route('home') }}'; return false;" style="cursor: pointer;">
             </a>
             <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
                     data-target="#navigation" aria-controls="navigation-index" aria-expanded="false"
@@ -40,7 +40,7 @@
         <div class="collapse navbar-collapse justify-content-end" id="navigation">
             <div class="logo-nav-res default text-center">
                 <a href="#">
-                    <img src="/assets/img/shiliran-logo-purple-143x36.svg" height="36px" alt="">
+                    <img src="/assets/img/shiliran-logo-purple-143x36.svg" height="36px" alt="شیل ایران" onclick="window.location.href='{{ route('home') }}'; return false;" style="cursor: pointer;">
                 </a>
             </div>
             <ul class="navbar-nav default">
@@ -114,8 +114,11 @@
                 <li class="list-item">
                     <a class="" href="{{ route('contact') }}" >تماس با ما</a>
                 </li>
-                <li class="list-item">
+               <li class="list-item">
                     <a class="" href="{{ route('register_customer') }}" >ثبت اطلاعات مشتریان</a>
+               </li>
+                <li class="list-item">
+                    <a class="" href="https://app.shiliran.ir/warranty" >ثبت گارانتی</a>
                 </li>
             </ul>
         </div>
@@ -197,9 +200,9 @@
                                                 result[dataKey].forEach(function(item, index) {
                                                     let url = '';
                                                     if(item.type == 'guide'){
-                                                        url = '/product_guide/' + item.slug;
+                                                         url = '/product_guide/' + item.slug;
                                                     }else if(item.type == 'category'){
-                                                        url = '/post/' + item.slug;
+                                                         url = '/post/' + item.slug;
                                                     }
                                                     $('.search-box-list').append(`
                                                         <li class="list-group-item contsearch">
@@ -213,9 +216,10 @@
                                             }
                                             else if (dataKey === 'product'){
                                                 result[dataKey].forEach(function(item, index) {
+                                                    const productSlug = item.slug || item.id;
                                                     $('.search-box-list').append(`
                                                 <li class="list-group-item contsearch">
-                                                    <a href="/show_product_by_id/${item.id}" class="gsearch">
+                                                    <a href="/show_product_by_id/${encodeURIComponent(productSlug)}" class="gsearch">
                                                         <i class="fad fa-search"></i>
                                                         ${item.product_name}
                                                     </a>
