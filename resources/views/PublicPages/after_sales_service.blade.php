@@ -6,14 +6,26 @@
           content="آشنایی با شرکت شیل ایران، تولیدکننده تجهیزات صنعت برق با استانداردهای بین‌المللی. خدمات با کیفیت، تیم حرفه‌ای، و راه‌حل‌های خلاقانه.">
     <meta name="keywords"
           content="شیل ایران, صنعت برق, کلید مینیاتوری, کنتاکتور, کلید اتوماتیک, تولید تجهیزات برق, استاندارد IEC, شرکت برقی, تولید ملی">
-    <link rel="canonical" href="{{ url()->current() }}"/>
 @endsection
-
+@section('head-tag')
+    <style>
+        @media (max-width: 576px) {
+            .hero h1 {
+                font-size: 1.4rem;
+            }
+            .hero p {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+@endsection
 @section('content')
+
+
     <main class="single-product default">
         <div class="row mb-5 p-5 rounded-4 text-white text-center align-items-center shadow-lg"
              style="background: linear-gradient(135deg, var(--custom-primary-color), #00293c);">
-            <div class="col">
+            <div class="col hero">
                 <h1 class="display-5 fw-bold">خدمات پس از فروش</h1>
                 <p class="lead">با افتخار، پیشگام در صنعت برق کشور</p>
             </div>
@@ -21,7 +33,6 @@
 
         <div class="container">
             <div class="row justify-content-center g-4 mb-5">
-                <!-- ایکون باکس ثبت گارانتی -->
                 <div class="col-md-4 col-sm-6">
                     <a href="https://app.shiliran.ir/warranty" class="text-decoration-none">
                         <div class="card border-0 shadow-sm hover-shadow text-center h-100 service-box">
