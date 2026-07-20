@@ -13,9 +13,7 @@ use App\Http\Controllers\Customer\UserProfileController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
 //Route::get('/', function () {return Inertia::render('welcome');})->name('home');
-
 Route::get('/', [IndexController::class, 'home'])->name('home');
 Route::get('/show_product_by_id/{id}', [IndexController::class, 'redirect_product_by_id'])->where('id', '[0-9]+')->name('show_product_by_id_legacy');
 Route::get('/show_product_by_id/{slug}', [IndexController::class, 'show_product_by_id'])->name('show_product_by_id');
