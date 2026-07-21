@@ -27,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'AccessUser' => \App\Http\Middleware\AccessUser::class,
+            'shilapp.signature'=>\App\Http\Middleware\VerifyShilappSignature::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

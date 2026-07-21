@@ -69,7 +69,6 @@ class RegisteredUserController extends Controller
         if ($request->header('X-Inertia')) {
             return Inertia::location(route('mobile_number_verification'));
         }
-
         return to_route('mobile_number_verification');
     }
 }

@@ -51,5 +51,11 @@ return [
         'verify_url' => env('BMI_VERIFY_URL', 'https://sadad.shaparak.ir/vpg/api/v0/Advice/Verify'),
         'purchase_url' => env('BMI_PURCHASE_URL', 'https://sadad.shaparak.ir/VPG/Purchase'),
     ],
+    'shilapp' => [
+        'client_id' => env('SHILAPP_CLIENT_ID'),
+        'client_secret' => env('SHILAPP_CLIENT_SECRET'),
+        'allowed_ips' => env('SHILAPP_ALLOWED_IPS'),
+    ],
+
 
 ];
