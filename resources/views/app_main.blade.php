@@ -363,14 +363,14 @@
                         <div class="col-12 col-lg-6">
                             <div class="widget-banner card">
                                 <a href="#" target="_blank">
-                                    <img class="img-fluid" src="assets/img/banner/banner-11.jpg" alt="بنر تبلیغاتی تجهیزات برق صنعتی شیل ایران">
+                                    <img class="img-fluid" src="assets/img/banner/battery.webp" alt="بنر تبلیغاتی تجهیزات برق صنعتی شیل ایران">
                                 </a>
                             </div>
                         </div>
                         <div class="col-12 col-lg-6">
                             <div class="widget-banner card">
                                 <a href="#" target="_top">
-                                    <img class="img-fluid" src="assets/img/banner/banner-12.jpg" alt="بنر تبلیغاتی محصولات شیل ایران">
+                                    <img class="img-fluid" src="assets/img/banner/inverter.webp" alt="بنر تبلیغاتی محصولات شیل ایران">
                                 </a>
                             </div>
                         </div>
