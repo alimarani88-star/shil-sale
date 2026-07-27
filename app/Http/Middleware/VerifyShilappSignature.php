@@ -66,25 +66,18 @@ class VerifyShilappSignature
         $method = strtoupper($request->method());
         $path = '/' . ltrim($request->path(), '/');
 
-        $dataForSignature = $method === 'GET'
-            ? $request->query()
-            : $request->all();
-
-        $body = empty($dataForSignature)
-            ? ''
-            : json_encode($dataForSignature, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-
         $signaturePayload = $method
             . '|' . $path
             . '|' . $timestamp
-            . '|' . $nonce
-            . '|' . $body;
+            . '|' . $nonce;
 
         $expectedSignature = hash_hmac(
             'sha256',
             $signaturePayload,
             config('services.shilapp.client_secret')
         );
+
+
 
         if (!hash_equals($expectedSignature, $signature)) {
             return response()->json([

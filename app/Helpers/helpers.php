@@ -34,7 +34,6 @@ function convertArabicToEnglish($number)
 }
 
 
-
 function convertEnglishToPersian($number)
 {
     $number = str_replace('0', '۰', $number);
@@ -50,6 +49,7 @@ function convertEnglishToPersian($number)
 
     return $number;
 }
+
 function to_slug($string): string
 {
     $translateKeywords = [
@@ -230,10 +230,32 @@ function to_slug($string): string
         'changeover4p' => 'کلید_چنج_اور_چهار_پل',
     ];
 
-    $string  = str_replace( array_values($translateKeywords) , array_keys($translateKeywords), $string);
-  return  \Illuminate\Support\Str::slug($string);
+    $string = str_replace(array_values($translateKeywords), array_keys($translateKeywords), $string);
+    return \Illuminate\Support\Str::slug($string);
 }
 
 
+function _log(
+    $processId,
+    $action,
+    $tableName ,
+    $module ,
+    $description = '',
+    $userId = null,
+    $userName = null
+): void {
+    $user = auth()->user();
 
+    $userId ??= $user?->id;
+    $userName ??= $user?->name;
 
+     \App\Models\Log::create([
+        'module' => $module,
+        'table_name' => $tableName,
+        'process_id' => $processId,
+        'action' => $action,
+        'description' => $description,
+        'user_id' => $userId,
+        'user_name' => $userName,
+    ]);
+}
