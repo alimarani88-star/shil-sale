@@ -62,14 +62,26 @@ class VerifyShilappSignature
         }
 
         Cache::put($nonceCacheKey, true, now()->addMinutes(10));
+        
 
         $method = strtoupper($request->method());
         $path = '/' . ltrim($request->path(), '/');
 
+        $dataForSignature = $method === 'GET'
+            ? $request->query()
+            : $request->all();
+
+        $body = empty($dataForSignature)
+            ? ''
+            : json_encode($dataForSignature, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
         $signaturePayload = $method
             . '|' . $path
             . '|' . $timestamp
-            . '|' . $nonce;
+            . '|' . $nonce
+            . '|' . $body;
+
+
 
         $expectedSignature = hash_hmac(
             'sha256',
