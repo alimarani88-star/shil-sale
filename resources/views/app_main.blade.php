@@ -41,11 +41,33 @@
                         <img src="assets/img/slider/slider-11.mp4" class="d-block w-100" alt="بنر ویدیویی محصولات برق صنعتی شیل ایران">
                     </a>
                 </div> -->
-                <div class="carousel-item active">
+                <!-- <div class="carousel-item active">
                     <a class="d-block" href="#">
                         <img src="assets/img/slider/slider-12.gif" class="d-block w-100" alt="بنر فروشگاه محصولات برق صنعتی شیل ایران">
                     </a>
+                </div> -->
+
+
+                 <div class="carousel-item active">
+                    <a class="d-block" href="#">
+                        <img src="assets/img/slider/slider_18.webp" class="d-block w-100" alt="بنر تجهیزات برق صنعتی شیل ایران">
+                    </a>
                 </div>
+
+                 <div class="carousel-item ">
+                    <a class="d-block" href="#">
+                        <img src="assets/img/slider/slider_22.webp" class="d-block w-100" alt="بنر فروش ویژه محصولات شیل ایران">
+                    </a>
+                </div>
+                <div class="carousel-item">
+                    <a class="d-block" href="#">
+                        <img src="assets/img/slider/slider_20.webp" class="d-block w-100" alt="بنر تجهیزات برق صنعتی شیل ایران">
+                    </a>
+                </div>
+
+
+
+
                  <!-- <div class="carousel-item">
                     <a class="d-block" href="#">
                         <img src="assets/img/slider/slider-22.gif" class="d-block w-100" alt="بنر فروش ویژه محصولات شیل ایران">
@@ -79,7 +101,7 @@
                 <i class="now-ui-icons arrows-1_minimal-left"></i>
             </a>
         </section>
-        <div class="container">
+        <div class="container-fluid">
             <section id="main-slider-mb" class="carousel slide carousel-fade card main-slider-st d-md-none"
                      data-ride="carousel">
                 <ol class="carousel-indicators">
@@ -91,24 +113,24 @@
                 <div class="carousel-inner">
                     <div class="carousel-item active">
                         <a class="d-block" href="#">
-                            <img src="assets/img/slider/001.jpg" class="d-block w-100" alt="بنر محصولات برق صنعتی شیل ایران">
+                            <img src="assets/img/slider/005.webp" class="d-block w-100" alt="بنر محصولات برق صنعتی شیل ایران">
                         </a>
                     </div>
                     <div class="carousel-item">
                         <a class="d-block" href="#">
-                            <img src="assets/img/slider/002.jpg" class="d-block w-100" alt="بنر تجهیزات تابلو برق شیل ایران">
+                            <img src="assets/img/slider/006.webp" class="d-block w-100" alt="بنر تجهیزات تابلو برق شیل ایران">
                         </a>
                     </div>
                     <div class="carousel-item">
                         <a class="d-block" href="#">
-                            <img src="assets/img/slider/003.jpg" class="d-block w-100" alt="بنر کلید مینیاتوری و محافظ جان شیل ایران">
+                            <img src="assets/img/slider/007.webp" class="d-block w-100" alt="بنر کلید مینیاتوری و محافظ جان شیل ایران">
                         </a>
                     </div>
-                    <div class="carousel-item">
+                    <!-- <div class="carousel-item">
                         <a class="d-block" href="#">
                             <img src="assets/img/slider/004.jpg" class="d-block w-100" alt="بنر خرید آنلاین تجهیزات برق صنعتی شیل ایران">
                         </a>
-                    </div>
+                    </div> -->
                 </div>
                 <a class="carousel-control-prev" href="#main-slider-mb" role="button" data-slide="prev">
                     <i class="now-ui-icons arrows-1_minimal-right"></i>
