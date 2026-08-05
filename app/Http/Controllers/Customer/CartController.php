@@ -266,10 +266,6 @@ class CartController extends Controller
 
     public function cart_payment(Request $request)
     {
-
-        if(Auth::id() != 4){
-            dd('عدم امکان پرداخت');
-        }
         $order = null;
         $requestedOrderId = (int) $request->query('order', 0);
 
@@ -298,8 +294,7 @@ class CartController extends Controller
 
         $requestPaymentResult = $this->bmiGatewayService->requestPayment(
             (string) $order->code,
-      //            (int) round((float) $order->total_price),
-            (int) round((float) 10000),
+            (int) round((float) $order->total_price),
             $returnUrl
         );
 

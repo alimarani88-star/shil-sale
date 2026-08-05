@@ -105,18 +105,22 @@
 
                                 <div class="row">
                                     <div class="checkout-time-table checkout-time-table-time">
-                                        <span class="checkout-additional-options-checkbox-image"></span>
+{{--                                        <span class="checkout-additional-options-checkbox-image"></span>--}}
                                         <div>
-                                            <div class="checkout-time-table-title-bar checkout-time-table-title-bar-city">
-                                                بازه تحویل سفارش: زمان تقریبی تحویل
-                                                <span class="delivery_time">{{ $slaDays }}</span>
-                                            </div>
-                                            <ul class="checkout-time-table-subtitle-bar">
-                                                <li>شیوه ارسال : {{$serviceName}} </li>
-                                                <li>هزینه ارسال: <span style="color: #fb3449;"
-                                                        class="price_send">{{ number_format($price_send ?? 0) }} ریال</span>
-                                                </li>
-                                            </ul>
+                                            <p class="p-2 d-flex align-items-center" style="gap: 8px; color: #f1c40f; font-size: 1.15rem;">
+                                                <img src="{{ asset('assets/img/deka_post.png') }}" alt="دکاپست" style="height: 28px; width: auto;">
+                                                <span>مرسوله توسط دکاپست و به صورت پسا کرایه ارسال می گردد .</span>
+                                            </p>
+{{--                                            <div class="checkout-time-table-title-bar checkout-time-table-title-bar-city">--}}
+{{--                                                بازه تحویل سفارش: زمان تقریبی تحویل--}}
+{{--                                                <span class="delivery_time">{{ $slaDays }}</span>--}}
+{{--                                            </div>--}}
+{{--                                            <ul class="checkout-time-table-subtitle-bar">--}}
+{{--                                                <li>شیوه ارسال : {{$serviceName}} </li>--}}
+{{--                                                <li>هزینه ارسال: <span style="color: #fb3449;"--}}
+{{--                                                        class="price_send">{{ number_format($price_send ?? 0) }} ریال</span>--}}
+{{--                                                </li>--}}
+{{--                                            </ul>--}}
                                         </div>
                                     </div>
                                 </div>
@@ -199,11 +203,11 @@
                                         <li><span>مبلغ کل ({{ $carts->count() ?? "" }} کالا)</span>
                                             <span>{{ number_format($totalPrice) ?? ""}} ریال</span>
                                         </li>
-                                        <li>
-                                            <span>هزینه ارسال</span>
-                                            <span style="color: #fb3449;" class="price_send">{{ number_format($price_send)}}
-                                                ریال</span>
-                                        </li>
+{{--                                        <li>--}}
+{{--                                            <span>هزینه ارسال</span>--}}
+{{--                                            <span style="color: #fb3449;" class="price_send">{{ number_format($price_send)}}--}}
+{{--                                                ریال</span>--}}
+{{--                                        </li>--}}
                                     </ul>
 
                                     <div class="checkout-summary-devider">

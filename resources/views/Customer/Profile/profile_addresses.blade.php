@@ -11,7 +11,8 @@
                         <div class="col-lg-12">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h1 class="title-tab-content">آدرس ها</h1>
-                                <button type="button" class="btn  custom-primary" data-toggle="modal"
+                                <button type="button" class="btn text-white" style="background-color: #00bfd6;"
+                                        data-toggle="modal"
                                         data-target="#addAddressModal">
                                     افزودن آدرس جدید
                                 </button>
@@ -57,7 +58,7 @@
                                     </div>
                                 @empty
                                     <div class="col-12 text-center py-5">
-                                        <p class="text-muted">هیچ آدرسی ثبت نشده است.</p>
+                                        <p class="mb-0" style="color: #f1c40f; font-size: 1.15rem;">هیچ آدرسی ثبت نشده است برای ثبت سفارش حداقل یک آدرس وارد نمایید</p>
 
                                     </div>
                                 @endforelse
@@ -292,8 +293,11 @@
                             timerProgressBar: true
 
                         }).then(() => {
-
-                            location.reload();
+                            if (res.redirect) {
+                                window.location.href = res.redirect;
+                            } else {
+                                location.reload();
+                            }
                         });
                     },
                     error: function (xhr) {
