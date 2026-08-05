@@ -96,65 +96,69 @@ class IndexController extends Controller
 
         $category_banners = [
             [
-                "title" => "کلید های مینیاتوری",
+                "title" => "کلید های قطع و وصل",
                 "slug"  => "miniature-key",
-                "src"   => "assets/img/banner/product-01.jpg",
+                // "src"   => "assets/img/banner/product-01.jpg",
+                "src"   => "assets/img/banner/product-0109.webp",
             ],
             [
-                "title" => "محافظ جان",
+                "title" => "تجهیزات خورشیدی و نیروگاهی",
                 "slug"  => "miniature-life-saving-key",
-                "src"   => "assets/img/banner/product-02.jpg",
+                // "src"   => "assets/img/banner/product-02.jpg",
+                 "src"   => "assets/img/banner/product-0110.webp",
             ],
             [
-                "title"  => "کلید کنتاکتور",
+                "title"  => "کلید های فشاری",
                 "slug" => "contactor-key",
-                "src"   => "assets/img/banner/product-03.jpg",
+                // "src"   => "assets/img/banner/product-03.jpg",
+                 "src"   => "assets/img/banner/product-0111.webp",
             ],
             [
-                "title" => "تجهیزات صنعتی",
+                "title" => "تجهیرات حفاظتی",
                 "slug"  => "industrial-equipment",
-                "src"   => "assets/img/banner/product-04.jpg",
+                // "src"   => "assets/img/banner/product-04.jpg",
+                 "src"   => "assets/img/banner/product-0108.webp",
             ],
-            [
-                "title" => "کلید اتوماتیک قابل تنظیم",
-                "slug"  => "adjustable-automatic-switch",
-                "src"   => "assets/img/banner/product-05.jpg",
-            ],
-            [
-                "title" => "کلید اتوماتیک الکترونیکی",
-                "slug"  => "electronic-automatic-key",
-                "src"   => "assets/img/banner/product-06.jpg",
-            ],
-            [
-                "title" => "کلید اتوماتیک فیکس",
-                "slug"  => "automatic-key-fix",
-                "src"   => "assets/img/banner/product-07.jpg",
-            ],
-            [
-                "title" => "کلید هوشمند",
-                "slug"  => "smart-electronics",
-                "src"   => "assets/img/banner/product-08.jpg",
-            ],
-            [
-                "title" => "تجهیزات خورشیدی",
-                "slug"  => "solar-and-power-plant-equipment",
-                "src"   => "assets/img/banner/product-09.jpg",
-            ],
-            [
-                "title" => "استابلایزر",
-                "slug"  => "stabilizer",
-                "src"   => "assets/img/banner/product-10.jpg",
-            ],
-            [
-                "title" => "اینورتر",
-                "slug"  => "inverter",
-                "src"   => "assets/img/banner/product-11.jpg",
-            ],
-            [
-                "title" => "محافظ ولتاژ",
-                "slug"  => "voltage-protector",
-                "src"   => "assets/img/banner/product-12.jpg",
-            ],
+            // [
+            //     "title" => "کلید اتوماتیک قابل تنظیم",
+            //     "slug"  => "adjustable-automatic-switch",
+            //     "src"   => "assets/img/banner/product-05.jpg",
+            // ],
+            // [
+            //     "title" => "کلید اتوماتیک الکترونیکی",
+            //     "slug"  => "electronic-automatic-key",
+            //     "src"   => "assets/img/banner/product-06.jpg",
+            // ],
+            // [
+            //     "title" => "کلید اتوماتیک فیکس",
+            //     "slug"  => "automatic-key-fix",
+            //     "src"   => "assets/img/banner/product-07.jpg",
+            // ],
+            // [
+            //     "title" => "کلید هوشمند",
+            //     "slug"  => "smart-electronics",
+            //     "src"   => "assets/img/banner/product-08.jpg",
+            // ],
+            // [
+            //     "title" => "تجهیزات خورشیدی",
+            //     "slug"  => "solar-and-power-plant-equipment",
+            //     "src"   => "assets/img/banner/product-09.jpg",
+            // ],
+            // [
+            //     "title" => "استابلایزر",
+            //     "slug"  => "stabilizer",
+            //     "src"   => "assets/img/banner/product-10.jpg",
+            // ],
+            // [
+            //     "title" => "اینورتر",
+            //     "slug"  => "inverter",
+            //     "src"   => "assets/img/banner/product-11.jpg",
+            // ],
+            // [
+            //     "title" => "محافظ ولتاژ",
+            //     "slug"  => "voltage-protector",
+            //     "src"   => "assets/img/banner/product-12.jpg",
+            // ],
         ];
 
 
@@ -629,9 +633,11 @@ class IndexController extends Controller
 
     public function product_guide(Request $request)
     {
+        
         $group = (string)$request->query('group') ?? null;
         $agent = (string)$request->query('agent', '');
         $main_group = (string)$request->query('main_group', '');
+        $product = (string)$request->query('product', '');
 
 
         if(!$group){
@@ -643,8 +649,13 @@ class IndexController extends Controller
         if(!$main_group){
             $main_group = null;
         }
+        if(!$product){
+            $product = null;
+        }
 
-        $guide_documents=Guide_documents::where('group_id', $group)
+        $guide_documents=Guide_documents::
+              where('group_id', $group)
+            ->where('product_id', $product)
             ->where('main_group_id', $main_group)
             ->where('agent',$agent)
             ->get();
@@ -652,7 +663,12 @@ class IndexController extends Controller
 
         if ($group === '75' && $agent === '0040') {
             return view('Customer.Guide.product_guide_support',compact('guide_documents'));
-        }elseif($main_group === '4300' && $agent === '0041'){
+        }elseif ($product === '2429' && $agent === '0040'){
+            return view('Customer.Guide.product_guide_support',compact('guide_documents'));
+        }elseif ($group === '203' && $agent === '0040'){
+            return view('Customer.Guide.product_guide_support',compact('guide_documents'));
+        }
+        elseif($main_group === '4300' && $agent === '0041'){
             return view('Customer.Guide.product_guide_support',compact('guide_documents'));
         }elseif($main_group === '4400' && $agent === '0041'){
             return view('Customer.Guide.product_guide_support',compact('guide_documents'));

@@ -291,7 +291,8 @@
                 @foreach($category_banners as $banner)
                     <div class="col-6 col-lg-3">
                         <div class="widget-banner card">
-                            <a href="{{ route('products_category' , ["slug"=>$banner['slug']]) }}" target="_blank">
+                            <!-- <a href="{{ route('products_category' , ["slug"=>$banner['slug']]) }}" target="_blank"> -->
+                            <a href="#" target="_blank">
                                 <img class="img-fluid" src="{{$banner['src']}}" alt="{{$banner['title']}} شیل ایران" title="{{$banner['title']}}">
                             </a>
                         </div>
@@ -385,14 +386,14 @@
                         <div class="col-12 col-lg-6">
                             <div class="widget-banner card">
                                 <a href="#" target="_blank">
-                                    <img class="img-fluid" src="assets/img/banner/battery.webp" alt="بنر تبلیغاتی تجهیزات برق صنعتی شیل ایران">
+                                    <img class="img-fluid" src="assets/img/banner/banner_2004.webp" alt="بنر تبلیغاتی تجهیزات برق صنعتی شیل ایران">
                                 </a>
                             </div>
                         </div>
                         <div class="col-12 col-lg-6">
                             <div class="widget-banner card">
                                 <a href="#" target="_top">
-                                    <img class="img-fluid" src="assets/img/banner/inverter.webp" alt="بنر تبلیغاتی محصولات شیل ایران">
+                                    <img class="img-fluid" src="assets/img/banner/banner_2003.webp" alt="بنر تبلیغاتی محصولات شیل ایران">
                                 </a>
                             </div>
                         </div>
@@ -483,7 +484,8 @@
                         <div class="col-12">
                             <div class="widget widget-banner card">
                                 <a href="#" target="_blank">
-                                    <img class="img-fluid" src="assets/img/banner/baner-22.jpg" alt="بنر معرفی محصولات برق صنعتی شیل ایران">
+                                    <!-- <img class="img-fluid" src="assets/img/banner/baner-22.jpg" alt="بنر معرفی محصولات برق صنعتی شیل ایران"> -->
+                                    <img class="img-fluid" src="assets/img/banner/baner-25.webp" alt="بنر معرفی محصولات برق صنعتی شیل ایران">
                                 </a>
                             </div>
                         </div>
