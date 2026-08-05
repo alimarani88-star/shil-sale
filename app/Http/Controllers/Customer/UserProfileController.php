@@ -275,10 +275,17 @@ class UserProfileController extends Controller
 
         Address::create($data);
 
-        return response()->json([
+        $response = [
             'status' => 'success',
             'message' => '.آدرس با موفقیت ثبت شد',
-        ]);
+        ];
+
+        if (session('to_url') === 'cart_select_address') {
+            session()->forget('to_url');
+            $response['redirect'] = route('cart_select_address');
+        }
+
+        return response()->json($response);
     }
 
     public function profile_remove_address($id)
