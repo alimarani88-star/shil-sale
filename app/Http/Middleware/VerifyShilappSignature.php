@@ -36,7 +36,7 @@ class VerifyShilappSignature
             ], 401);
         }
 
-        if (abs(now()->timestamp - (int) $timestamp) > 300) {
+        if (abs(now()->timestamp - (int) $timestamp) > 1000) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Request expired',
@@ -62,7 +62,7 @@ class VerifyShilappSignature
         }
 
         Cache::put($nonceCacheKey, true, now()->addMinutes(10));
-        
+
 
         $method = strtoupper($request->method());
         $path = '/' . ltrim($request->path(), '/');
