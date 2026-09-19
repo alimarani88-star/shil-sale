@@ -41,28 +41,17 @@ export default function Login({ status, canResetPassword, success, error }: Logi
             didOpen: (toast) => {
                 toast.onmouseenter = Swal.stopTimer;
                 toast.onmouseleave = Swal.resumeTimer;
-            }
+            },
         });
 
         if (success) {
-            Toast.fire({
-                icon: 'success',
-                title: success
-            });
+            Toast.fire({ icon: 'success', title: success });
         }
-
         if (error) {
-            Toast.fire({
-                icon: 'error',
-                title: error
-            });
+            Toast.fire({ icon: 'error', title: error });
         }
-
         if (status) {
-            Toast.fire({
-                icon: 'success',
-                title: status
-            });
+            Toast.fire({ icon: 'success', title: status });
         }
     }, [success, error, status]);
 
@@ -74,81 +63,76 @@ export default function Login({ status, canResetPassword, success, error }: Logi
     };
 
     return (
-        <AuthLayout title="ورود به حساب کاربری" description="نام کاربری و کلمه عبور خود را وارد نمایید">
-            <Head title="Log in">
+        <AuthLayout title="ورود به حساب کاربری" description="برای ادامه، شماره موبایل و کلمه عبور خود را وارد کنید">
+            <Head title="ورود">
                 <meta name="robots" content="noindex, follow" />
                 <link rel="canonical" href="https://www.shil.ir/login" />
             </Head>
 
-            <form className="flex flex-col gap-6" onSubmit={submit}>
-                <div className="grid gap-6">
-                    <div className="grid gap-2">
-                        <Label htmlFor="username">نام کاربری (شماره موبایل)</Label>
-                        <Input
-                            id="username"
-                            type="text"
-                            required
-                            autoFocus
-                            tabIndex={1}
-                            autoComplete="username"
-                            value={data.username}
-                            onChange={(e) => setData('username', e.target.value)}
-                            placeholder="username"
-                        />
-                        <InputError message={errors.username} />
-                    </div>
+            <form className="flex flex-col gap-5" onSubmit={submit}>
+                <div className="grid gap-2">
+                    <Label htmlFor="username">نام کاربری (شماره موبایل)</Label>
+                    <Input
+                        id="username"
+                        type="text"
+                        required
+                        autoFocus
+                        tabIndex={1}
+                        autoComplete="username"
+                        value={data.username}
+                        onChange={(e) => setData('username', e.target.value)}
+                        placeholder="09120000000"
+                    />
+                    <InputError message={errors.username} />
+                </div>
 
-                    <div className="grid gap-2">
-                        <div className="flex items-center">
-                            <Label htmlFor="password">کلمه عبور</Label>
-                        </div>
-                        <Input
-                            id="password"
-                            type="password"
-                            required
-                            tabIndex={2}
-                            autoComplete="current-password"
-                            value={data.password}
-                            onChange={(e) => setData('password', e.target.value)}
-                            placeholder="Password"
-                        />
-                        <InputError message={errors.password} />
-                    </div>
-
-
-                    <div className="flex items-center space-x-3">
-                        <Checkbox
-                            id="remember"
-                            name="remember"
-                            checked={data.remember}
-                            onClick={() => setData('remember', !data.remember)}
-                            tabIndex={3}
-                        />
-                        <Label htmlFor="remember">Remember me</Label>
-                    </div>
-
-                    <div className="flex items-center space-x-3">
+                <div className="grid gap-2">
+                    <div className="flex items-center justify-between gap-3">
+                        <Label htmlFor="password">کلمه عبور</Label>
                         {canResetPassword && (
-                            <TextLink href={route('password.request')} className="ml-auto text-sm" tabIndex={5}>
-                                فراموش کردن کلمه عبور ؟
+                            <TextLink href={route('password.request')} className="auth-link text-xs" tabIndex={5}>
+                                فراموش کرده‌اید؟
                             </TextLink>
                         )}
                     </div>
-
-                    <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing} style={{background:'#69499C'}}>
-                        {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                        ورود
-                    </Button>
+                    <Input
+                        id="password"
+                        type="password"
+                        required
+                        tabIndex={2}
+                        autoComplete="current-password"
+                        value={data.password}
+                        onChange={(e) => setData('password', e.target.value)}
+                        placeholder="کلمه عبور"
+                    />
+                    <InputError message={errors.password} />
                 </div>
 
-                <div className="text-muted-foreground text-center text-sm">
+                <div className="flex items-center gap-2">
+                    <Checkbox
+                        id="remember"
+                        name="remember"
+                        checked={data.remember}
+                        onClick={() => setData('remember', !data.remember)}
+                        tabIndex={3}
+                    />
+                    <Label htmlFor="remember" className="cursor-pointer font-normal text-slate-600">
+                        مرا به خاطر بسپار
+                    </Label>
+                </div>
+
+                <Button type="submit" className="auth-submit mt-1 w-full" tabIndex={4} disabled={processing}>
+                    {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                    ورود به حساب
+                </Button>
+
+                <p className="pt-1 text-center text-sm text-slate-500">
                     حساب کاربری ندارید؟{' '}
-                    <TextLink href={route('register')} tabIndex={5}>
-                        ثبت نام
+                    <TextLink href={route('register')} className="auth-link" tabIndex={6}>
+                        ثبت‌نام
                     </TextLink>
-                </div>
+                </p>
             </form>
-            {/*{status && <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>}*/}
         </AuthLayout>
     );
 }

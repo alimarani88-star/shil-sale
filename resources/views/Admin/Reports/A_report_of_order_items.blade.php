@@ -237,13 +237,17 @@
                             <span class="status-badge status-deleted">
                                 حذف شده
                             </span>
-                        @elseif((int) $order->status === 1)
+                        @elseif((int) $order->status === \App\Models\Order::STATUS_PAID)
                             <span class="status-badge status-paid">
-                                {{ $order->status_title ?? 'پرداخت شده' }}
+                                {{ $order->resolvedStatusTitle() }}
+                            </span>
+                        @elseif((int) $order->status === \App\Models\Order::STATUS_CANCELLED_TO_WALLET)
+                            <span class="status-badge status-deleted">
+                                {{ $order->resolvedStatusTitle() }}
                             </span>
                         @else
                             <span class="status-badge status-pending">
-                                {{ $order->status_title ?? 'در انتظار پرداخت' }}
+                                {{ $order->resolvedStatusTitle() }}
                             </span>
                         @endif
                     </div>

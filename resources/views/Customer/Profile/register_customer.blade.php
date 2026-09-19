@@ -105,6 +105,31 @@
                                             </div>
                                         </div>
                                         <div class="col-sm-12 col-md-6">
+                                            <div class="form-account-title">انتخاب غرفه <span class="text-danger">*</span></div>
+                                            <div class="form-account-row">
+                                                @php
+                                                    $boothOptions = \App\Models\ExhibitionCustomer::BOOTHS;
+                                                    $selectedBooth = old('booth', \App\Models\ExhibitionCustomer::BOOTH_SHIL_IRAN);
+                                                @endphp
+                                                <select class="form-control form-control-sm select2"
+                                                        name="booth"
+                                                        id="booth">
+                                                    @foreach($boothOptions as $boothOption)
+                                                        <option value="{{ $boothOption }}" {{ $selectedBooth === $boothOption ? 'selected' : '' }}>
+                                                            {{ $boothOption }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                @error('booth')
+                                                <span
+                                                    class="alert_required bg-danger text-white p-1 rounded d-inline-block mt-1"
+                                                    role="alert">
+                                            <strong>{{ $message }}</strong>
+                                              </span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-6">
                                             <div class="form-account-title">شهر <span
                                                     class="text-danger">*</span></div>
                                             <div class="form-account-row">
@@ -231,6 +256,7 @@
             if (navigationType === 'reload') {
 
                 $('form#register_form :input').not(':button, :submit, :reset, :hidden').val('').trigger('change.select2');
+                $('#booth').val(@json(\App\Models\ExhibitionCustomer::BOOTH_SHIL_IRAN)).trigger('change');
             }
 
             let oldProvince = "{{ old('province') }}";
@@ -241,12 +267,20 @@
         });
 
 
-        $('.select2').select2(
+        $('.select2').not('#booth').select2(
             {
                 placeholder: "انتخاب کنید",
                 width: '100%',
                 allowClear: true,
                 dir: "rtl"
+            });
+
+        $('#booth').select2(
+            {
+                width: '100%',
+                dir: "rtl",
+                allowClear: false,
+                minimumResultsForSearch: Infinity
             });
 
 

@@ -23,7 +23,7 @@
             <div class="row justify-content-center g-4 mb-5">
                 <!-- ایکون باکس ثبت گارانتی -->
                 <div class="col-md-4 col-sm-6">
-                    <a href="https://app.shiliran.ir/warranty" class="text-decoration-none">
+                    <a href="https://app.shil.ir/warranty" class="text-decoration-none">
                         <div class="card border-0 shadow-sm hover-shadow text-center h-100 service-box">
                             <div class="card-body p-4">
                                 <div class="icon-wrapper mb-3">
@@ -63,7 +63,7 @@
                @endif
 
                 <div class="col-md-4 col-sm-6">
-                    <a href="https://gap.shiliran.ir/" class="text-decoration-none">
+                    <a href="https://erp.shil.ir/chat" class="text-decoration-none">
                         <div class="card border-0 shadow-sm hover-shadow text-center h-100 service-box">
                             <div class="card-body p-4">
                                 <div class="icon-wrapper mb-3">

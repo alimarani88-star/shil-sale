@@ -12,6 +12,14 @@ class ExhibitionCustomer extends Model
 
     protected $table = 'exhibition_customers';
 
+    public const BOOTH_SHIL_IRAN = 'شیل ایران';
+    public const BOOTH_SIM_CABLE_IRANIAN = 'سیم وکابل ایرانیان';
+
+    public const BOOTHS = [
+        self::BOOTH_SHIL_IRAN,
+        self::BOOTH_SIM_CABLE_IRANIAN,
+    ];
+
     protected $fillable = [
         'first_name',
         'last_name',
@@ -24,6 +32,7 @@ class ExhibitionCustomer extends Model
         'raffle_participate',
         'raffle_company_number',
         'exhibition_name',
+        'booth',
         'description',
         'status',
         'type',

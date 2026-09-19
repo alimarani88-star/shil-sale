@@ -80,6 +80,12 @@
     display: none;
 }
 
+/* پنل دسته‌بندی موبایل: همیشه پیش‌فرض مخفی */
+.mobile-category-overlay,
+.mobile-category-panel {
+    display: none !important;
+}
+
 /* فقط موبایل */
 @media (max-width: 768px) {
     .mobile-bottom-nav {
@@ -93,7 +99,7 @@
         background: #fff;
         border-top: 1px solid #ddd;
         padding: 5px 0;
-        z-index: 1050;  /* بالاتر از بقیه محتوا ولی پایین تر از مودال‌ها */
+        z-index: 1202; /* بالاتر از پنل دسته‌بندی تا همیشه قابل کلیک باشد */
     }
 
     .mobile-bottom-nav a {
@@ -109,6 +115,149 @@
     .mobile-bottom-nav i {
         font-size: 20px;
         margin-bottom: 2px;
+    }
+
+    .mobile-bottom-nav a.active-categories {
+        color: #6a1b9a;
+    }
+
+    .mobile-category-overlay {
+        display: none !important;
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 54px;
+        left: 0;
+        background: rgba(0, 0, 0, 0.45);
+        z-index: 1200;
+    }
+
+    .mobile-category-overlay.is-open {
+        display: block !important;
+    }
+
+    .mobile-category-panel {
+        display: none !important;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 54px;
+        max-height: calc(100vh - 120px);
+        background: #fff;
+        border-radius: 16px 16px 0 0;
+        z-index: 1201;
+        flex-direction: column;
+        box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.12);
+        overflow: hidden;
+    }
+
+    .mobile-category-panel.is-open {
+        display: flex !important;
+    }
+
+    .mobile-category-panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px;
+        border-bottom: 1px solid #eee;
+        font-weight: 700;
+        color: #333;
+        background: #faf7fc;
+        border-radius: 16px 16px 0 0;
+        flex: 0 0 auto;
+    }
+
+    .mobile-category-close {
+        border: none;
+        background: #eee;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        color: #666;
+        font-size: 18px;
+        line-height: 1;
+        cursor: pointer;
+    }
+
+    .mobile-category-list,
+    .mobile-category-children {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .mobile-category-list {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 6px 0 12px;
+        flex: 1 1 auto;
+    }
+
+    .mobile-category-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 0 8px 0 12px;
+        border-bottom: 1px solid #f1f1f1;
+        min-height: 48px;
+    }
+
+    .mobile-category-link {
+        flex: 1 1 auto;
+        color: #333;
+        text-decoration: none;
+        font-size: 14px;
+        padding: 12px 4px;
+        text-align: right;
+    }
+
+    .mobile-category-toggle {
+        flex: 0 0 auto;
+        width: 40px;
+        height: 40px;
+        border: 1px solid #e5e5e5;
+        border-radius: 8px;
+        background: #f7f7f7;
+        color: #6a1b9a;
+        font-size: 16px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.2s ease;
+    }
+
+    .mobile-category-item.is-open > .mobile-category-row > .mobile-category-toggle {
+        transform: rotate(180deg);
+        background: #f3e5f5;
+    }
+
+    .mobile-category-children {
+        display: none;
+        background: #fafafa;
+    }
+
+    .mobile-category-item.is-open > .mobile-category-children {
+        display: block;
+    }
+
+    .mobile-category-children .mobile-category-link {
+        font-size: 13px;
+        padding-right: 18px;
+    }
+
+    .mobile-category-children .mobile-category-children .mobile-category-link {
+        padding-right: 30px;
+    }
+
+    .mobile-category-children .mobile-category-children .mobile-category-children .mobile-category-link {
+        padding-right: 42px;
+    }
+
+    body.mobile-category-open {
+        overflow: hidden;
     }
 }
 

@@ -17,6 +17,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
        $this->app->bind(ShiliranApiInterface::class, ShiliranApiService::class);
+       $this->app->singleton(\App\Services\AdminAccessService::class);
     }
 
     /**

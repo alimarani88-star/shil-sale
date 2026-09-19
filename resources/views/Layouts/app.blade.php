@@ -328,7 +328,7 @@
                                 </a>
                             </div>
                             <div class="dropdown-item">
-                                <a href="#" class="dropdown-item-link">
+                                <a href="/profile_orders" class="dropdown-item-link">
                                     <i class="now-ui-icons shopping_bag-16"></i>
                                     پیگیری سفارش
                                 </a>

@@ -11,7 +11,8 @@
                         <div class="col-lg-12">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h1 class="title-tab-content">آدرس ها</h1>
-                                <button type="button" class="btn  custom-primary" data-toggle="modal"
+                                <button type="button" class="btn text-white" style="background-color: #00bfd6;"
+                                        data-toggle="modal"
                                         data-target="#addAddressModal">
                                     افزودن آدرس جدید
                                 </button>
@@ -57,7 +58,7 @@
                                     </div>
                                 @empty
                                     <div class="col-12 text-center py-5">
-                                        <p class="text-muted">هیچ آدرسی ثبت نشده است.</p>
+                                        <p class="mb-0" style="color: #f1c40f; font-size: 1.15rem;">هیچ آدرسی ثبت نشده است برای ثبت سفارش حداقل یک آدرس وارد نمایید</p>
 
                                     </div>
                                 @endforelse
@@ -82,6 +83,30 @@
                             <form id="addAddressForm" method="POST" action="{{ route('s_profile_add_address') }}">
                                 @csrf
                                 <div class="modal-body">
+
+                                    @php
+                                        $needsNationalCode = blank($userProfileInfo->national_code ?? null);
+                                    @endphp
+
+                                    @if($needsNationalCode)
+                                        <div class="mb-3" id="national-code-field-wrap">
+                                            <label class="form-label">کد ملی <span class="text-danger">*</span></label>
+                                            <input type="text"
+                                                   name="national_code"
+                                                   id="national_code"
+                                                   class="input-field text-right"
+                                                   inputmode="numeric"
+                                                   maxlength="10"
+                                                   placeholder="باید ۱۰ رقم باشد"
+                                                   value="{{ old('national_code') }}">
+                                            @error('national_code')
+                                            <span class="alert_required bg-danger text-white p-1 rounded d-inline-block mt-1"
+                                                  role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                            @enderror
+                                        </div>
+                                    @endif
 
                                     <div class="row">
                                         <div class="col-sm-12 col-md-6">
@@ -292,8 +317,11 @@
                             timerProgressBar: true
 
                         }).then(() => {
-
-                            location.reload();
+                            if (res.redirect) {
+                                window.location.href = res.redirect;
+                            } else {
+                                location.reload();
+                            }
                         });
                     },
                     error: function (xhr) {

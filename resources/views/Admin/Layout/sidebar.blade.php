@@ -1,4 +1,4 @@
-<aside class="main-sidebar sidebar-dark-primary elevation-4">
+<aside class="main-sidebar sidebar-light-primary elevation-4">
 
     <div class="brand-link" style="text-decoration: none;">
         <img src="{{ asset('assets/img/logo-icon.png') }}" class="brand-image img-circle elevation-3"
@@ -14,7 +14,7 @@
             <!-- Sidebar user panel (optional) -->
             <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                 <div class="info">
-                    <span class="brand-text text-white">{{ auth()->user()?->name }}</span>
+                    <span class="brand-text">{{ auth()->user()?->name }}</span>
                 </div>
             </div>
             <div>
@@ -41,9 +41,10 @@
                     </li>
 
 
-                    <li class="nav-item has-treeview {{ request()->routeIs('A_show_product', 'A_create_product') ? 'menu-open' : '' }}">
+                    @if(admin_can('products'))
+                    <li class="nav-item has-treeview {{ request()->routeIs('A_show_product', 'A_create_product', 'A_select_new_products') ? 'menu-open' : '' }}">
                         <a href="#"
-                           class="nav-link {{ request()->routeIs('A_show_product', 'A_create_product') ? 'active' : '' }}">
+                           class="nav-link {{ request()->routeIs('A_show_product', 'A_create_product', 'A_select_new_products') ? 'active' : '' }}">
                             <i class="nav-icon fa fa-cubes"></i>
                             <p>
                                 کالاها
@@ -65,10 +66,19 @@
                                     <p>ایجاد کالای جدید</p>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="{{ route('A_select_new_products') }}"
+                                   class="nav-link {{ request()->routeIs('A_select_new_products') ? 'active' : '' }}">
+                                    <i class="fa fa-star nav-icon"></i>
+                                    <p>انتخاب محصول جدید ترین ها</p>
+                                </a>
+                            </li>
                         </ul>
                     </li>
+                    @endif
 
 
+                    @if(admin_can('discounts'))
                     <li class="nav-item has-treeview {{ request()->routeIs('A_show_amazingsale','A_show_common_discount','A_show_discount') ? 'menu-open' : '' }}">
                         <a href="#"
                            class="nav-link {{ request()->routeIs('A_show_amazingsale','A_show_common_discount','A_show_discount') ? 'active' : '' }}">
@@ -107,7 +117,9 @@
                             </li>
                         </ul>
                     </li>
+                    @endif
 
+                    @if(admin_can('posts'))
                     <li class="nav-item has-treeview {{ request()->routeIs('A_create_post', 'A_edit_post', 'A_categories' , 'A_posts','A_create_category' , 'A_edit_category') ? 'menu-open' : '' }}">
                         <a href="#"
                            class="nav-link {{ request()->routeIs('A_create_post', 'A_edit_post', 'A_categories' , 'A_posts','A_create_category' , 'A_edit_category') ? 'active' : '' }}">
@@ -148,6 +160,8 @@
                             </li>
                         </ul>
                     </li>
+                    @endif
+                    @if(admin_can('packing'))
                     <li class="nav-item has-treeview {{ request()->routeIs('A_post_packing_list', 'A_product_packing_list','A_carton_list') ? 'menu-open' : '' }}">
                         <a href="#"
                            class="nav-link {{ request()->routeIs('A_post_packing_list', 'A_product_packing_list','A_carton_list') ? 'active' : '' }}">
@@ -182,10 +196,12 @@
 
                         </ul>
                     </li>
+                    @endif
+                    @if(admin_can('settings'))
                     <li
-                        class="nav-item has-treeview {{ request()->routeIs('A_edit_about', 'A_edit_contact') ? 'menu-open' : '' }}">
+                        class="nav-item has-treeview {{ request()->routeIs('A_edit_about', 'A_edit_contact', 'A_contact_messages') ? 'menu-open' : '' }}">
                         <a href="#"
-                           class="nav-link {{ request()->routeIs('A_edit_about', 'A_edit_contact') ? 'active' : '' }}">
+                           class="nav-link {{ request()->routeIs('A_edit_about', 'A_edit_contact', 'A_contact_messages') ? 'active' : '' }}">
                             <i class="nav-icon fa fa-cog"></i>
                             <p>
                                 تنظیمات
@@ -208,6 +224,13 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a href="{{ route('A_contact_messages') }}"
+                                   class="nav-link {{ request()->routeIs('A_contact_messages') ? 'active' : '' }}">
+                                    <i class="fa fa-envelope nav-icon"></i>
+                                    <p>پیام‌های تماس</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="{{ route('A_edit_frequently_asked_questions') }}"
                                    class="nav-link {{ request()->routeIs('A_edit_frequently_asked_questions') ? 'active' : '' }}">
                                     <i class="fa fa-question-circle nav-icon"></i>
@@ -216,13 +239,16 @@
                             </li>
                         </ul>
                     </li>
+                    @endif
+                    @if(admin_can('reports'))
                     <li class="nav-item has-treeview
     {{ request()->routeIs(
         'A_report_of_exhibition_customers',
         'A_report_of_exhibition_visitors',
         'A_report_of_exhibition_visitors_by_city',
         'A_report_of_site_customers',
-        'A_generate_sitemap'
+        'A_generate_sitemap',
+        'A_contact_messages'
     ) ? 'menu-open' : '' }}">
 
                         <a href="#"
@@ -232,7 +258,8 @@
            'A_report_of_exhibition_visitors',
            'A_report_of_site_customers',
            'A_report_of_exhibition_visitors_by_city',
-           'A_generate_sitemap'
+           'A_generate_sitemap',
+           'A_contact_messages'
        ) ? 'active' : '' }}">
                             <i class="fa fa-pie-chart" aria-hidden="true"></i>
                             <p>
@@ -303,9 +330,18 @@
                                 </a>
                             </li>
 
+                            <li class="nav-item">
+                                <a href="{{ route('A_contact_messages') }}"
+                                   class="nav-link {{ request()->routeIs('A_contact_messages') ? 'active' : '' }}">
+                                    <p>پیام‌های کاربران</p>
+                                </a>
+                            </li>
+
                         </ul>
                     </li>
+                    @endif
 
+                    @if(admin_can('settings'))
                     <li class="nav-item">
                         <a href="{{ route('A_generate_sitemap') }}"
                            class="nav-link {{ request()->routeIs('A_generate_sitemap') ? 'active' : '' }}">
@@ -313,16 +349,27 @@
                             <p>تولید Sitemap</p>
                         </a>
                     </li>
+                    @endif
 
+                    @if(admin_can('queue'))
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fa fa-th"></i>
-                            <p>
-                                لینک ساده
-                                <span class="right badge badge-danger">جدید</span>
-                            </p>
+                        <a href="{{ route('A_queue_monitor') }}"
+                           class="nav-link {{ request()->routeIs('A_queue_monitor') ? 'active' : '' }}">
+                            <i class="fa fa-tasks nav-icon"></i>
+                            <p>مانیتورینگ جاب‌ها</p>
                         </a>
                     </li>
+                    @endif
+
+                    @if(admin_can('users'))
+                    <li class="nav-item">
+                        <a href="{{ route('A_staff_access') }}"
+                           class="nav-link {{ request()->routeIs('A_staff_access') ? 'active' : '' }}">
+                            <i class="fa fa-users nav-icon"></i>
+                            <p>دسترسی کارکنان</p>
+                        </a>
+                    </li>
+                    @endif
                 </ul>
             </nav>
             <!-- /.sidebar-menu -->

@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Customer;
 
+use App\Models\ExhibitionCustomer;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CustomerInfoRequest extends FormRequest
 {
@@ -31,6 +33,7 @@ class CustomerInfoRequest extends FormRequest
             'description'   => 'nullable|string|max:500',
             'request_agency' => 'sometimes|numeric',
             'raffle_participate' => 'sometimes|boolean',
+            'booth' => ['required', 'string', Rule::in(ExhibitionCustomer::BOOTHS)],
         ];
     }
 
@@ -47,6 +50,8 @@ class CustomerInfoRequest extends FormRequest
             'city.integer'        => 'شناسه شهر معتبر نیست.',
             'city.required'        => 'انتخاب شهر الزامی هست',
             'raffle_participate.sometimes' => 'انتخاب قرعه کشی',
+            'booth.required'      => 'انتخاب غرفه الزامی است.',
+            'booth.in'            => 'غرفه انتخاب‌شده معتبر نیست.',
         ];
     }
 
@@ -55,6 +60,9 @@ class CustomerInfoRequest extends FormRequest
         $this->merge([
             'mobile' => convertPersianToEnglish($this->mobile),
             'raffle_participate' => $this->has('raffle_participate') ? 1 : 0,
+            'booth' => $this->filled('booth')
+                ? $this->booth
+                : ExhibitionCustomer::BOOTH_SHIL_IRAN,
         ]);
     }
 

@@ -22,6 +22,37 @@
         max-height: 600px;
         overflow: auto;
     }
+
+    header.main-header .cart .dropdown-menu .basket-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: nowrap;
+    }
+
+    header.main-header .cart .dropdown-menu .basket-header .basket-total {
+        flex: 1 1 auto;
+        min-width: 0;
+        margin: 0;
+        white-space: nowrap;
+    }
+
+    header.main-header .cart .basket-header a.btn.basket-view-btn {
+        background-color: #fb3449;
+        color: #fff;
+        flex: 0 0 auto;
+        white-space: nowrap;
+        margin: 0;
+        padding: 6px 12px;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+    header.main-header .cart .basket-header a.btn.basket-view-btn:hover {
+        background-color: #e22e42;
+        color: #fff;
+    }
 </style>
 <header class="main-header default">
     <div class="container">
@@ -126,7 +157,7 @@
                                 </a>
                             </div>
                             <div class="dropdown-item">
-                                <a href="#" class="dropdown-item-link">
+                                <a href="/profile_orders" class="dropdown-item-link">
                                     <i class="now-ui-icons shopping_bag-16"></i>
                                     پیگیری سفارش
                                 </a>
@@ -148,7 +179,7 @@
                                 <span class="total-price">0</span>
                                 <span> ریال</span>
                             </div>
-                            <a href="{{ route("cart") }}" class="basket-link">
+                            <a href="{{ route("cart") }}" class="btn basket-view-btn">
                                 <span>مشاهده سبد خرید</span>
                             </a>
                         </div>

@@ -18,6 +18,8 @@ use App\Models\OrderItem;
 use App\Models\ProvinceCity;
 use App\Models\User;
 use App\Models\UserProfile;
+use App\Models\WalletTransaction;
+use App\Services\WalletService;
 use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -208,7 +210,10 @@ class UserProfileController extends Controller
     {
         $user = Auth::user();
         $userProfileInfo = UserProfile::where('user_id', $user->id)->first();
-        $orders = Order::Where('customer_id', $user->id)->get();
+
+        Order::expirePendingPastDeadlineForCustomer((int) $user->id);
+
+        $orders = Order::Where('customer_id', $user->id)->latest('id')->get();
 
         $date = new Jdf();
         foreach ($orders as $order) {
@@ -275,10 +280,19 @@ class UserProfileController extends Controller
 
         Address::create($data);
 
-        return response()->json([
+        $this->saveNationalCodeIfNeeded($user->id, $inputs['national_code'] ?? null);
+
+        $response = [
             'status' => 'success',
             'message' => '.آدرس با موفقیت ثبت شد',
-        ]);
+        ];
+
+        if (session('to_url') === 'cart_select_address') {
+            session()->forget('to_url');
+            $response['redirect'] = route('cart_select_address');
+        }
+
+        return response()->json($response);
     }
 
     public function profile_remove_address($id)
@@ -336,10 +350,29 @@ class UserProfileController extends Controller
 
         Address::where('id',$id)->where('user_id',$user->id)->update($data);
 
+        $this->saveNationalCodeIfNeeded($user->id, $inputs['national_code'] ?? null);
+
         return response()->json([
             'status'  => 'success',
             'message' => '.آدرس با موفقیت ویرایش شد',
         ]);
+    }
+
+    private function saveNationalCodeIfNeeded(int $userId, ?string $nationalCode): void
+    {
+        if (blank($nationalCode)) {
+            return;
+        }
+
+        $profile = UserProfile::where('user_id', $userId)->first();
+        if ($profile && filled($profile->national_code)) {
+            return;
+        }
+
+        UserProfile::updateOrCreate(
+            ['user_id' => $userId],
+            ['national_code' => $nationalCode]
+        );
     }
 
 
@@ -422,9 +455,12 @@ class UserProfileController extends Controller
     {
         $inputs = $request->safe()->all();
 
-        $exhibition_name= 'نمایشگاه بهمن 1404 - مشهد';
+        $exhibition_name= 'نمایشگاه برق شهریور 1405 - اصفهان';
 
-        $check=ExhibitionCustomer::where('exhibition_name',$exhibition_name)->where('mobile' , $inputs['mobile'])->first();
+        $check=ExhibitionCustomer::where('exhibition_name',$exhibition_name)
+            ->where('mobile' , $inputs['mobile'])
+            ->where('booth' , $inputs['booth'])
+            ->first();
         if($check != null){
 
             // return redirect()
@@ -478,6 +514,7 @@ class UserProfileController extends Controller
             'raffle_participate' => $raffleParticipate ? 1 : 0,
             'raffle_company_number' => $raffleNumber,
             'exhibition_name' => $exhibition_name,
+            'booth' => $inputs['booth'] ?? ExhibitionCustomer::BOOTH_SHIL_IRAN,
             'description' => $inputs['description'] ?? null,
             'request_agency' => ($inputs['request_agency'] ?? 0) == 1 ? 1 : 0,
             'registrant_name' => $registrant_name,
@@ -488,7 +525,11 @@ class UserProfileController extends Controller
         ExhibitionCustomer::create($data);
 
         $mobile = $inputs['mobile'];
+
         $templateId = 634987;
+        if($inputs['booth'] == "سیم وکابل ایرانیان"){
+            $templateId = 788608;
+        }
         $parameters = [
             [
                 "name" => "NAME",
@@ -524,6 +565,11 @@ class UserProfileController extends Controller
         return view('Customer.Profile.customer_links');
     }
 
+    public function customer_links_s()
+    {
+        return view('Customer.Profile.customer_links_s');
+    }
+
 
 
 
@@ -536,7 +582,11 @@ class UserProfileController extends Controller
         $date = new Jdf();
 
         $order = Order::with('address.province', 'address.city')
+            ->where('customer_id', Auth::id())
             ->findOrFail($validated['order']);
+
+        $order->expireIfPaymentDeadlinePassed();
+        $order->refresh();
 
         $order->created_at_jalali = $date->toJalali($order->created_at);
 
@@ -548,6 +598,77 @@ class UserProfileController extends Controller
         }
 
         return view('Customer.Profile.profile_order_detail', compact('order', 'orderItems'));
+    }
+
+    public function cancel_order(Request $request, WalletService $walletService)
+    {
+        $validated = $request->validate([
+            'order' => 'required|integer|exists:orders,id',
+        ]);
+
+        $order = Order::query()
+            ->where('customer_id', Auth::id())
+            ->findOrFail($validated['order']);
+
+        try {
+            $order = $walletService->creditCancelledOrder($order);
+            _log(
+                $order->id,
+                'status-' . Order::STATUS_CANCELLED_TO_WALLET,
+                'orders',
+                'payment',
+                Order::titleForStatus(Order::STATUS_CANCELLED_TO_WALLET)
+            );
+        } catch (\RuntimeException $exception) {
+            return redirect()
+                ->route('order_detail', ['order' => $validated['order']])
+                ->with('error', $exception->getMessage());
+        } catch (\Throwable $exception) {
+            report($exception);
+            return redirect()
+                ->route('order_detail', ['order' => $validated['order']])
+                ->with('error', 'لغو سفارش انجام نشد. لطفاً دوباره تلاش کنید.');
+        }
+
+        $cancelCredit = WalletTransaction::query()
+            ->where('order_id', $order->id)
+            ->where('reason', WalletTransaction::REASON_ORDER_CANCEL)
+            ->first();
+
+        $successMessage = $cancelCredit && $cancelCredit->isPendingFinance()
+            ? 'سفارش لغو شد. مبلغ به کیف پول واریز شد و پس از تأیید مالی قابل استفاده است.'
+            : 'سفارش لغو شد و مبلغ به کیف پول شما واریز شد.';
+
+        return redirect()
+            ->route('order_detail', ['order' => $order->id])
+            ->with('success', $successMessage);
+    }
+
+    public function profile_wallet(WalletService $walletService)
+    {
+        $user = Auth::user();
+        $userProfileInfo = UserProfile::where('user_id', $user->id)->first();
+        $walletBalance = $walletService->getBalance((int) $user->id);
+        $walletPendingBalance = $walletService->getPendingBalance((int) $user->id);
+        $date = new Jdf();
+
+        $walletTransactions = WalletTransaction::query()
+            ->where('user_id', $user->id)
+            ->latest('id')
+            ->limit(50)
+            ->get();
+
+        foreach ($walletTransactions as $transaction) {
+            $transaction->created_at_jalali = $date->toJalali($transaction->created_at);
+        }
+
+        return view('Customer.Profile.profile_wallet', compact(
+            'user',
+            'userProfileInfo',
+            'walletBalance',
+            'walletPendingBalance',
+            'walletTransactions'
+        ));
     }
 
 }

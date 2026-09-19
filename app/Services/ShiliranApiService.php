@@ -11,7 +11,7 @@ class ShiliranApiService implements ShiliranApiInterface
 
     public function __construct()
     {
-        $this->baseUrl = config('services.shiliran.base_uri', 'https://app.shiliran.ir');
+        $this->baseUrl = config('services.shiliran.base_uri', 'https://app.shil.ir');
         $this->apiKey  = config('services.shiliran.key', env('GLOBAL_API_KEY'));
     }
 

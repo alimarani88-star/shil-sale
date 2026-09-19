@@ -26,4 +26,24 @@ class RegisterCodeRequest extends FormRequest
             "username"=> "required|min:11|max:11",
         ];
     }
+
+    public function attributes(): array
+    {
+        return [
+            'verification_code' => 'کد تأیید',
+            'username' => 'شماره موبایل',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'verification_code.required' => 'وارد کردن کد تأیید الزامی است.',
+            'verification_code.min' => 'کد تأیید باید ۴ رقم باشد.',
+            'verification_code.max' => 'کد تأیید باید ۴ رقم باشد.',
+            'username.required' => 'شماره موبایل الزامی است.',
+            'username.min' => 'شماره موبایل باید ۱۱ رقم باشد.',
+            'username.max' => 'شماره موبایل باید ۱۱ رقم باشد.',
+        ];
+    }
 }

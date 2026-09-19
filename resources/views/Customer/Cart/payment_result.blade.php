@@ -29,7 +29,7 @@
                                 <p>
                                     وضعیت سفارش:
                                     <span class="badge {{ $isSuccess === true ? 'badge-success' : ($isSuccess === false ? 'badge-danger' : 'badge-secondary') }}">
-                                        {{ $order->status_title }}
+                                        {{ $order->resolvedStatusTitle() }}
                                     </span>
                                 </p>
                             @endif

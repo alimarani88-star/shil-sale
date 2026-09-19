@@ -43,9 +43,9 @@ class SitemapController extends Controller
             // Products (use cursor to avoid memory issues)
             Product::where('status', 1)->whereNull('deleted_at')->cursor()->each(function (Product $product) use ($sitemap) {
                 $slugOrId = $product->slug ?: $product->id;
-                if (Route::has('show_product_by_id')) {
+                if (Route::has('product')) {
                     try {
-                        $url = route('show_product_by_id', $slugOrId);
+                        $url = route('product', $slugOrId);
                         $sitemap->add(Url::create($url)->setLastModificationDate($product->updated_at));
                     } catch (\Exception $ex) {
                         // skip invalid

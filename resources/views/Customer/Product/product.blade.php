@@ -1,6 +1,72 @@
 @extends('Customer.Layout.master')
 
-@section('canonical', 'https://www.shil.ir/show_product_by_id/' . $product->slug)
+@php
+    $seoProductName = trim((string) $product->product_name);
+    $seoCanonical = 'https://www.shil.ir/product/' . $product->slug;
+    $seoDescriptionRaw = trim(preg_replace('/\s+/u', ' ', strip_tags((string) ($product->description ?? ''))));
+    $seoDescription = $seoDescriptionRaw !== ''
+        ? \Illuminate\Support\Str::limit($seoDescriptionRaw, 160, '...')
+        : 'خرید ' . $seoProductName . ' شیل ایران با مشاهده قیمت، مشخصات فنی و امکان ثبت سفارش آنلاین در فروشگاه شیل ایران.';
+    $seoImage = $product->images->isNotEmpty()
+        ? 'https://www.shil.ir/get_image_by_id/' . $product->images->first()->id
+        : 'https://www.shil.ir/assets/img/logo-icon.png';
+    $seoPrice = (float) $product->price;
+    if (!empty($product->productPercentage) && (float) $product->productPercentage > 0) {
+        $seoPrice = round($seoPrice * (1 - ((float) $product->productPercentage / 100)));
+    }
+    $seoInStock = ((int) $product->marketable > 0 && (int) ($inventory ?? 0) > 0);
+    $seoTitle = 'خرید ' . $seoProductName . ' | قیمت و مشخصات | شیل ایران';
+@endphp
+
+@section('title', $seoTitle)
+@section('canonical', $seoCanonical)
+
+@section('meta')
+    <meta name="description" content="{{ $seoDescription }}">
+
+    <meta property="og:type" content="product">
+    <meta property="og:locale" content="fa_IR">
+    <meta property="og:site_name" content="شیل ایران">
+    <meta property="og:title" content="{{ $seoTitle }}">
+    <meta property="og:description" content="{{ $seoDescription }}">
+    <meta property="og:url" content="{{ $seoCanonical }}">
+    <meta property="og:image" content="{{ $seoImage }}">
+    <meta property="product:price:amount" content="{{ $seoPrice }}">
+    <meta property="product:price:currency" content="IRR">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $seoTitle }}">
+    <meta name="twitter:description" content="{{ $seoDescription }}">
+    <meta name="twitter:image" content="{{ $seoImage }}">
+
+    <script type="application/ld+json">
+        {!! json_encode([
+            '@context' => 'https://schema.org',
+            '@type' => 'Product',
+            'name' => $seoProductName,
+            'description' => $seoDescription,
+            'image' => [$seoImage],
+            'sku' => (string) ($product->product_id_in_app ?? $product->id),
+            'brand' => [
+                '@type' => 'Brand',
+                'name' => 'شیل ایران',
+            ],
+            'offers' => [
+                '@type' => 'Offer',
+                'url' => $seoCanonical,
+                'priceCurrency' => 'IRR',
+                'price' => (string) $seoPrice,
+                'availability' => $seoInStock
+                    ? 'https://schema.org/InStock'
+                    : 'https://schema.org/OutOfStock',
+                'seller' => [
+                    '@type' => 'Organization',
+                    'name' => 'شیل ایران',
+                ],
+            ],
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}
+    </script>
+@endsection
 
 @section('content')
 
@@ -14,6 +80,38 @@
         .owl-item.active{
             margin-left: 0px !important;
         }
+        .product-image-column {
+            position: relative;
+        }
+        main.single-product .product .product-image-frame {
+            border: 1px solid #ac4fea;
+            border-radius: 8px;
+            padding: 12px;
+            position: relative;
+            background: #fff;
+            overflow: hidden;
+        }
+        main.single-product .product .product-image-frame .product-gallery {
+            position: relative;
+            z-index: 1;
+            min-height: 410px;
+        }
+        main.single-product .product .product-image-frame .zoomWrapper {
+            float: none !important;
+            margin-bottom: 0 !important;
+            width: 100% !important;
+            height: 410px !important;
+        }
+        main.single-product .product .product-image-frame ul.gallery-options {
+            top: 18px;
+            right: 18px;
+            z-index: 2;
+        }
+        main.single-product .product .product-image-column #gallery_01f {
+            float: none !important;
+            width: 100% !important;
+            margin-top: 12px;
+        }
     </style>
 
     <div class="wrapper default">
@@ -25,39 +123,41 @@
                     <div class="col-lg-8 col-12">
                         <article class="product ">
                             <div class="row">
-                                <div class="col-lg-5 col-md-6 col-sm-12">
+                                <div class="col-lg-5 col-md-6 col-sm-12 product-image-column">
 
-                                    <div class="product-gallery default">
+                                    <div class="product-image-frame">
+                                        <div class="product-gallery default">
 
-                                        @if($product->images->count() > 0)
-                                            <img class="zoom-img" id="img-product-zoom"
-                                                 src="{{ url('get_image_by_id/' . $product->images->first()->id) }}"
-                                                 data-zoom-image="{{ url('get_image_by_id/' . $product->images->first()->id) }}" />
-                                        @endif
+                                            @if($product->images->count() > 0)
+                                                <img class="zoom-img" id="img-product-zoom"
+                                                     src="{{ url('get_image_by_id/' . $product->images->first()->id) }}"
+                                                     data-zoom-image="{{ url('get_image_by_id/' . $product->images->first()->id) }}" />
+                                            @endif
 
 
+                                        </div>
+
+
+                                        <ul class="gallery-options">
+                                            <li>
+                                                <section class="product-add-to-favorite position-relative" style="top: 0">
+                                                    <button type="button" class="btn btn-light btn-sm text-decoration-none"
+                                                            data-url="{{ route('add_to_favorites', $product) }}"
+                                                            data-bs-toggle="tooltip" data-bs-placement="left">
+                                                        <i
+                                                            class="fa fa-heart {{ $product->favoritedBy->contains(auth()->id()) ? 'text-danger' : '' }}"></i>
+                                                        <span
+                                                            class="tooltip-option">{{ $product->favoritedBy->contains(auth()->id()) ? 'حذف از علاقه‌مندی' : 'افزودن به علاقه‌مندی' }}</span>
+                                                    </button>
+                                                </section>
+                                            </li>
+                                            <li>
+                                                <button data-toggle="modal" data-target="#myModal"><i
+                                                        class="fa fa-share-alt"></i></button>
+                                                <span class="tooltip-option">اشتراک گذاری</span>
+                                            </li>
+                                        </ul>
                                     </div>
-
-
-                                    <ul class="gallery-options">
-                                        <li>
-                                            <section class="product-add-to-favorite position-relative" style="top: 0">
-                                                <button type="button" class="btn btn-light btn-sm text-decoration-none"
-                                                        data-url="{{ route('add_to_favorites', $product) }}"
-                                                        data-bs-toggle="tooltip" data-bs-placement="left">
-                                                    <i
-                                                        class="fa fa-heart {{ $product->favoritedBy->contains(auth()->id()) ? 'text-danger' : '' }}"></i>
-                                                    <span
-                                                        class="tooltip-option">{{ $product->favoritedBy->contains(auth()->id()) ? 'حذف از علاقه‌مندی' : 'افزودن به علاقه‌مندی' }}</span>
-                                                </button>
-                                            </section>
-                                        </li>
-                                        <li>
-                                            <button data-toggle="modal" data-target="#myModal"><i
-                                                    class="fa fa-share-alt"></i></button>
-                                            <span class="tooltip-option">اشتراک گذاری</span>
-                                        </li>
-                                    </ul>
                                     <!-- Modal Core -->
                                     <div class="modal-share modal fade" id="myModal" tabindex="-1" role="dialog"
                                          aria-labelledby="myModalLabel" aria-hidden="true">
@@ -119,6 +219,20 @@
                                         </div>
                                     </div>
 
+                                    <div id="gallery_01f">
+                                        <ul class="gallery-items owl-carousel owl-theme" id="gallery-slider">
+                                            @foreach($product->images as $key => $image)
+                                                <li class="item">
+                                                    <a href="#" class="elevatezoom-gallery {{ $key == 0 ? 'active' : '' }}"
+                                                       data-image="{{ url('get_image_by_id/' . $image->id) }}"
+                                                       data-zoom-image="{{ url('get_image_by_id/' . $image->id) }}">
+                                                        <img src="{{ url('get_image_by_id/' . $image->id) }}" width="100" />
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+
                                 </div>
 
                                 <div class="col-lg-7 col-md-6 col-sm-12">
@@ -134,12 +248,14 @@
                                                 <span>برند</span> :
                                                 <span class="product-brand-title">شیل ایران</span>
                                             </li>
-                                            <li>
-                                                <span>دسته‌بندی</span> :
-                                                <a href="#" class="btn-link-border">
-                                                    {{$group['data']['main_group_name']}}
-                                                </a>
-                                            </li>
+                                            @if(!empty($mainGroupName))
+                                                <li>
+                                                    <span>دسته‌بندی</span> :
+                                                    <a href="#" class="btn-link-border">
+                                                        {{ $mainGroupName }}
+                                                    </a>
+                                                </li>
+                                            @endif
                                         </ul>
                                     </div>
 
@@ -182,29 +298,13 @@
                                         @endif
                                     </div>
                                 </div>
-
-                                <div class="col-lg-12">
-                                    <div id="gallery_01f" style="width:500px;float:left;">
-                                        <ul class="gallery-items owl-carousel owl-theme" id="gallery-slider">
-                                            @foreach($product->images as $key => $image)
-                                                <li class="item">
-                                                    <a href="#" class="elevatezoom-gallery {{ $key == 0 ? 'active' : '' }}"
-                                                       data-image="{{ url('get_image_by_id/' . $image->id) }}"
-                                                       data-zoom-image="{{ url('get_image_by_id/' . $image->id) }}">
-                                                        <img src="{{ url('get_image_by_id/' . $image->id) }}" width="100" />
-                                                    </a>
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                </div>
                             </div>
                         </article>
                     </div>
 
 
                     <div class="col-lg-4 col-12">
-                        <aside class="product-box-cart card p-3" style="box-shadow: none;">
+                        <aside class="product-box-cart card p-3" style="box-shadow: none; border-color: #ac4fea;">
                             <div class="price-product defualt mb-3">
 
                                 @if($product->productPercentage == null)
@@ -248,7 +348,9 @@
 
                                     <button type="button" class="btn btn-sm btn-outline-secondary qty-btn"
                                             id="qty-decrease">−</button>
-                                    <input id="product-qty" min="1" value="{{ $cart_items->count ?? 1 }}"
+                                    <input id="product-qty" min="1"
+                                           @if(!empty($maximumOrderLimit)) max="{{ (int) $maximumOrderLimit }}" @endif
+                                           value="{{ $cart_items->count ?? 1 }}"
                                            class="form-control text-center mx-2" style="width:80px;">
                                     <button type="button" class="btn btn-sm btn-outline-secondary qty-btn"
                                             id="qty-increase">+</button>
@@ -504,6 +606,29 @@
             const $increase = $('#qty-increase');
             const $decrease = $('#qty-decrease');
             const $remove_from_cart = $('#remove_from_cart');
+            const maxOrderLimit = @json($maximumOrderLimit ?? null);
+
+            function clampQty(qty) {
+                qty = parseInt(qty) || 1;
+                if (qty < 1) qty = 1;
+                if (maxOrderLimit !== null && qty > maxOrderLimit) {
+                    qty = maxOrderLimit;
+                }
+                return qty;
+            }
+
+            function showLimitError() {
+                if (maxOrderLimit === null) return;
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'warning',
+                    title: 'حداکثر تعداد مجاز سفارش این محصول ' + maxOrderLimit + ' عدد هست . لطفا برای سفارش بیشتر با واحد فروش به شماره 03133122 تماس حاصل فرمایید',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+            }
 
             $('#add_product_to_cart').click(function (e) {
                 addToCart();
@@ -511,10 +636,16 @@
 
             $increase.on('click', function () {
                 let current = parseInt($qtyInput.val()) || 1;
-                $qtyInput.val(current + 1);
+                if (maxOrderLimit !== null && current >= maxOrderLimit) {
+                    $qtyInput.val(maxOrderLimit);
+                    showLimitError();
+                    return;
+                }
+                const next = clampQty(current + 1);
+                $qtyInput.val(next);
 
                 if (!$('#remove_from_cart').hasClass('d-none')) {
-                    updateCartQuantity(current + 1);
+                    updateCartQuantity(next);
                 }
             });
 
@@ -530,6 +661,10 @@
             });
 
             function updateCartQuantity(qty) {
+                const previousQty = parseInt($qtyInput.data('last-qty')) || parseInt($qtyInput.val()) || 1;
+                qty = clampQty(qty);
+                $qtyInput.val(qty);
+
                 $.ajax({
                     url: '{{ route("update_count_product_cart") }}',
                     type: 'POST',
@@ -540,6 +675,7 @@
                     },
                     success: function (result) {
                         if (result.status === 'success') {
+                            $qtyInput.data('last-qty', qty);
                             $('.cart-number').text(result.cart_count);
                             Swal.fire({
                                 toast: true,
@@ -553,12 +689,20 @@
                             updateCartHeader();
                         }
                     },
-                    error: function () {
+                    error: function (xhr) {
+                        const currentCount = xhr.responseJSON && xhr.responseJSON.data
+                            ? xhr.responseJSON.data.current_count
+                            : previousQty;
+                        $qtyInput.val(currentCount);
+                        $qtyInput.data('last-qty', currentCount);
+                        const message = (xhr.responseJSON && xhr.responseJSON.message)
+                            ? xhr.responseJSON.message
+                            : 'خطا در به‌روزرسانی تعداد';
                         Swal.fire({
                             toast: true,
                             position: 'top-end',
                             icon: 'error',
-                            title: 'خطا در به‌روزرسانی تعداد',
+                            title: message,
                             showConfirmButton: false,
                             timer: 3000,
                             timerProgressBar: true
@@ -568,7 +712,8 @@
             }
 
             $('#product-qty').on('blur', function () {
-                let current = parseInt($qtyInput.val()) || 1;
+                let current = clampQty($qtyInput.val());
+                $qtyInput.val(current);
                 if (!$('#remove_from_cart').hasClass('d-none')) {
                     updateCartQuantity(current);
                 }
@@ -578,8 +723,15 @@
                 let value = parseInt($(this).val());
                 if (isNaN(value) || value < 1) {
                     $(this).val(1);
+                    return;
+                }
+                if (maxOrderLimit !== null && value > maxOrderLimit) {
+                    $(this).val(maxOrderLimit);
+                    showLimitError();
                 }
             });
+
+            $qtyInput.data('last-qty', clampQty($qtyInput.val()));
 
             $remove_from_cart.on('click', function () {
                 const productId = '{{ $product->id }}';
@@ -676,7 +828,8 @@
 
             function addToCart() {
 
-                var qty = parseInt($('#product-qty').val());
+                var qty = clampQty($('#product-qty').val());
+                $('#product-qty').val(qty);
 
                 $.ajax({
                     url: '{{ route("add_product_to_cart") }}',
@@ -688,6 +841,7 @@
                     },
                     success: function (result) {
                         if (result.status === 'success') {
+                            $qtyInput.data('last-qty', qty);
                             Swal.fire({
                                 toast: true,
                                 position: 'top-end',
@@ -715,30 +869,23 @@
                         }
                     },
                     error: function (xhr) {
-                        if (xhr.status === 422) {
-                            let errors = xhr.responseJSON.errors;
-                            let firstError = Object.values(errors)[0][0];
+                        const message = (xhr.responseJSON && xhr.responseJSON.message)
+                            ? xhr.responseJSON.message
+                            : (
+                                xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors
+                                    ? Object.values(xhr.responseJSON.errors)[0][0]
+                                    : 'خطایی رخ داد، لطفاً مجدداً تلاش کنید.'
+                            );
 
-                            Swal.fire({
-                                toast: true,
-                                position: 'top-end',
-                                icon: 'error',
-                                title: firstError,
-                                showConfirmButton: false,
-                                timer: 3000,
-                                timerProgressBar: true
-                            });
-                        } else {
-                            Swal.fire({
-                                toast: true,
-                                position: 'top-end',
-                                icon: 'error',
-                                title: 'خطایی رخ داد، لطفاً مجدداً تلاش کنید.',
-                                showConfirmButton: false,
-                                timer: 3000,
-                                timerProgressBar: true
-                            });
-                        }
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: message,
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true
+                        });
                     }
                 });
             }

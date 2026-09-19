@@ -9,9 +9,11 @@ use App\Models\Address;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Product;
 use App\Services\BmiGatewayService;
 use App\Services\CartService;
 use App\Services\GetDiscountService;
+use App\Services\WalletService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -24,12 +26,20 @@ class CartController extends Controller
         private readonly GetDiscountService $getDiscountService,
         private readonly CartService $cartService,
         private readonly BmiGatewayService $bmiGatewayService,
+        private readonly WalletService $walletService,
     ) {}
 
     public function cart()
     {
         $user = Auth::user();
-        $carts = Cart::where('user_id', $user->id)->with('product.images')->get();
+        $carts = $this->cartService->sanitizeCarts(
+            Cart::where('user_id', $user->id)->with('product.images')->get()
+        );
+
+        foreach ($carts as $cart) {
+            $cart->maximum_order_limit = $this->cartService->getMaximumOrderLimitOnSite($cart->product);
+        }
+
         [$totalPrice, $amountPayable, $totalProfit] = $this->cartService->calculateCartTotals($carts);
         return view('Customer.Cart.cart', compact('carts', 'totalPrice', 'amountPayable', 'totalProfit'));
     }
@@ -37,6 +47,16 @@ class CartController extends Controller
     public function add_product_to_cart(AddProductToCartRequest $request)
     {
         $inputs = $request->validated();
+        $product = Product::find($inputs['product_id']);
+
+        $limitError = $this->cartService->validateQuantityAgainstOrderLimit($product, (int) $inputs['quantity']);
+        if ($limitError !== null) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $limitError,
+            ], 422);
+        }
+
         Cart::create([
             'product_id' => $inputs['product_id'],
             'count' => $inputs['quantity'],
@@ -49,7 +69,7 @@ class CartController extends Controller
     public function update_count_product_cart(UpdateCartRequest $request)
     {
         $productId = $request->product_id;
-        $newCount = $request->quantity;
+        $newCount = (int) $request->quantity;
 
         $cart = Cart::where('user_id', Auth::id())
             ->where('product_id', $productId)
@@ -61,6 +81,26 @@ class CartController extends Controller
                 'status' => 'error',
                 'message' => 'محصول در سبد خرید یافت نشد',
             ], 404);
+        }
+
+        if (!$cart->product) {
+            $cart->delete();
+            return response()->json([
+                'status' => 'error',
+                'message' => 'این محصول دیگر موجود نیست و از سبد حذف شد',
+            ], 404);
+        }
+
+        $limitError = $this->cartService->validateQuantityAgainstOrderLimit($cart->product, $newCount);
+        if ($limitError !== null) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $limitError,
+                'data' => [
+                    'current_count' => (int) $cart->count,
+                    'maximum_order_limit' => $this->cartService->getMaximumOrderLimitOnSite($cart->product),
+                ],
+            ], 422);
         }
 
         $cart->update(['count' => $newCount]);
@@ -75,7 +115,9 @@ class CartController extends Controller
         $discountAmount = $productPrice - $productPriceDiscount;
         $totalDiscount = $discountAmount * $cart->count;
 
-        $carts = Cart::where('user_id', Auth::id())->with('product')->get();
+        $carts = $this->cartService->sanitizeCarts(
+            Cart::where('user_id', Auth::id())->with('product')->get()
+        );
         [$totalPrice, $amountPayable, $totalProfit] = $this->cartService->calculateCartTotals($carts);
 
         return response()->json([
@@ -112,7 +154,9 @@ class CartController extends Controller
 
         $cart->delete();
 
-        $carts = Cart::where('user_id', Auth::id())->with('product')->get();
+        $carts = $this->cartService->sanitizeCarts(
+            Cart::where('user_id', Auth::id())->with('product')->get()
+        );
         [$totalPrice, $amountPayable, $totalProfit] = $this->cartService->calculateCartTotals($carts);
 
         return response()->json([
@@ -129,7 +173,9 @@ class CartController extends Controller
     public function ajax_cart_header(Request $request)
     {
         $user = Auth::user();
-        $cart = Cart::where('user_id', $user->id)->with('product.images')->get();
+        $cart = $this->cartService->sanitizeCarts(
+            Cart::where('user_id', $user->id)->with('product.images')->get()
+        );
         $cartCount = $cart->count();
         $totalPrice = 0;
 
@@ -176,9 +222,9 @@ class CartController extends Controller
         Session::put('order_type', $data['serviceName']);
         Session::put('order_time', $data['slaDays']);
 
-        
 
-      
+
+
 
         return view('Customer.Cart.cart_select_address', $data);
     }
@@ -202,20 +248,32 @@ class CartController extends Controller
             'success' => true,
             'price_send' => $data['price_send'],
             'amountPayable' => $amountPayable,
-            'delivery_time' => $data['delivery_time']['slaDays'],
+            'delivery_time' => $data['slaDays'],
         ]);
     }
 
     public function cart_select_payment_type(Request $request)
     {
-        $carts = Cart::where('user_id', Auth::id())->with(['product.images'])->get();
+        $carts = $this->cartService->sanitizeCarts(
+            Cart::where('user_id', Auth::id())->with(['product.images'])->get()
+        );
         $send_price = Session::get('order_price_send', 0);
         Session::put('request_invoice', $request->request_invoice);
 
         [, $amountPayable, ] = $this->cartService->calculateCartTotals($carts);
         $amountPayable += $send_price;
+        $payableAmount = (int) round((float) $amountPayable);
+        $walletBalance = $this->walletService->getBalance((int) Auth::id());
+        $walletWillUse = $this->walletService->previewWalletUse((int) Auth::id(), $payableAmount);
+        $gatewayAmount = max(0, $payableAmount - $walletWillUse);
 
-        return view('Customer.Cart.cart_select_payment_type', compact('carts', 'amountPayable'))
+        return view('Customer.Cart.cart_select_payment_type', compact(
+            'carts',
+            'amountPayable',
+            'walletBalance',
+            'walletWillUse',
+            'gatewayAmount'
+        ))
             ->with('success', 'اطلاعات با موفقیت ثبت شد. لطفا نوع پرداخت را انتخاب کنید.');
     }
 
@@ -266,21 +324,23 @@ class CartController extends Controller
 
     public function cart_payment(Request $request)
     {
-
-        if(Auth::id() != 4){
-            dd('عدم امکان پرداخت');
-        }
         $order = null;
         $requestedOrderId = (int) $request->query('order', 0);
+
+        Order::expirePendingPastDeadlineForCustomer((int) Auth::id());
 
         if ($requestedOrderId > 0) {
             $order = Order::where('id', $requestedOrderId)
                 ->where('customer_id', Auth::id())
-                ->where('status', 0)
+                ->where('status', Order::STATUS_PENDING_PAYMENT)
                 ->first();
 
             if (!$order) {
-                return redirect()->route('profile_orders')->with('error', 'سفارش قابل پرداختی پیدا نشد.');
+                return redirect()->route('profile_orders')->with('error', 'سفارش قابل پرداختی پیدا نشد یا مهلت پرداخت آن به پایان رسیده است.');
+            }
+
+            if ($order->expireIfPaymentDeadlinePassed()) {
+                return redirect()->route('profile_orders')->with('error', 'مهلت پرداخت این سفارش به پایان رسیده است.');
             }
         } else {
             try {
@@ -296,10 +356,35 @@ class CartController extends Controller
             $returnUrl = route('payment.bmi.callback');
         }
 
+        try {
+            $remaining = $this->walletService->applyPaymentHoldForPendingOrder($order);
+        } catch (\RuntimeException $e) {
+            return redirect()->route('profile_orders')->with('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            Log::error('Error applying wallet hold for payment: ' . $e->getMessage());
+            return redirect()->route('profile_orders')->with('error', 'اعمال موجودی کیف پول برای پرداخت انجام نشد.');
+        }
+
+        $order->refresh();
+
+        if ($remaining <= 0) {
+            DB::transaction(function () use ($order) {
+                $lockedOrder = Order::query()->where('id', $order->id)->lockForUpdate()->first();
+                if ($lockedOrder) {
+                    $this->finalizePaidOrder($lockedOrder);
+                }
+            });
+
+            return $this->redirectAfterPaymentCallback(
+                $order->refresh(),
+                true,
+                'پرداخت از کیف پول با موفقیت انجام شد.'
+            );
+        }
+
         $requestPaymentResult = $this->bmiGatewayService->requestPayment(
             (string) $order->code,
-      //            (int) round((float) $order->total_price),
-            (int) round((float) 10000),
+            $remaining,
             $returnUrl
         );
 
@@ -327,11 +412,23 @@ class CartController extends Controller
             return redirect()->route('home')->with('error', 'سفارش موردنظر پیدا نشد.');
         }
 
+        if ($order->isCancelledToWallet()) {
+            return $this->redirectAfterPaymentCallback(
+                $order,
+                false,
+                'این سفارش لغو شده است.'
+            );
+        }
+
         if ($resCode !== 0) {
-            if ((int) $order->status === 0) {
-                $order->update([
-                    'status_title' => 'پرداخت ناموفق - در انتظار پرداخت مجدد',
-                ]);
+            if ($order->isPendingPayment()) {
+                if ($order->isPaymentDeadlinePassed()) {
+                    $order->expireIfPaymentDeadlinePassed();
+                } else {
+                    $order->update([
+                        'status_title' => Order::STATUS_TITLE_PAYMENT_FAILED_RETRY,
+                    ]);
+                }
             }
 
             return $this->redirectAfterPaymentCallback(
@@ -343,22 +440,34 @@ class CartController extends Controller
 
         $verifyResult = $this->bmiGatewayService->verifyPayment($token);
         if (!($verifyResult['success'] ?? false)) {
-            if ((int) $order->status === 0) {
-                $order->update([
-                    'status_title' => 'پرداخت ناموفق - در انتظار پرداخت مجدد',
-                ]);
+            if ($order->isPendingPayment()) {
+                if ($order->isPaymentDeadlinePassed()) {
+                    $order->expireIfPaymentDeadlinePassed();
+                } else {
+                    $order->update([
+                        'status_title' => Order::STATUS_TITLE_PAYMENT_FAILED_RETRY,
+                    ]);
+                }
             }
 
             $message = (string) ($verifyResult['message'] ?? 'تایید نهایی پرداخت انجام نشد.');
             return $this->redirectAfterPaymentCallback($order, false, $message);
         }
 
-        if ((int) $order->status !== 1) {
-            $order->update([
-                'status' => 1,
-                'status_title' => 'پرداخت شده',
-            ]);
+        // پرداخت موفق حتی پس از پایان مهلت پذیرفته می‌شود (مشتری قبلاً وارد درگاه شده)
+        try {
+            DB::transaction(function () use ($order) {
+                $lockedOrder = Order::query()->where('id', $order->id)->lockForUpdate()->first();
+                if ($lockedOrder) {
+                    $this->finalizePaidOrder($lockedOrder);
+                }
+            });
+        } catch (\Throwable $e) {
+            Log::error('Error finalizing paid order after bank callback: ' . $e->getMessage());
+            return $this->redirectAfterPaymentCallback($order, false, 'ثبت نهایی پرداخت انجام نشد. لطفاً با پشتیبانی تماس بگیرید.');
         }
+
+        $order->refresh();
 
         $traceNo = (string) ($verifyResult['system_trace_no'] ?? '');
         $refNo = (string) ($verifyResult['retrival_ref_no'] ?? '');
@@ -375,10 +484,11 @@ class CartController extends Controller
 
     public function bmi_callback1(Request $request)
     {
-        
+
         dd(323232323232);
 
     }
+
 
     public function payment_result(Request $request)
     {
@@ -412,9 +522,49 @@ class CartController extends Controller
     private function createPendingOrderFromCart(): Order
     {
         $user = Auth::user();
-        $carts = Cart::where('user_id', $user->id)->with(['product.images'])->get();
+        $carts = $this->cartService->sanitizeCarts(
+            Cart::where('user_id', $user->id)->with(['product.images'])->get()
+        );
         if ($carts->isEmpty()) {
             throw new \RuntimeException('سبد خرید شما خالی است.');
+        }
+
+        Order::expirePendingPastDeadlineForCustomer((int) $user->id);
+
+        // سفارش پرداخت‌نشده فعلی هنگام به‌روزرسانی دوباره ساخته می‌شود؛ از رزرو موجودی‌اش صرف‌نظر می‌کنیم
+        $pendingOrderId = Order::query()
+            ->where('customer_id', $user->id)
+            ->where('status', Order::STATUS_PENDING_PAYMENT)
+            ->latest('id')
+            ->value('id');
+
+        [$carts, $removedInventoryMessages] = $this->cartService->removeUnavailableCartItems(
+            $carts,
+            $pendingOrderId ? (int) $pendingOrderId : null
+        );
+
+        if (!empty($removedInventoryMessages)) {
+            $inventoryMessage = 'محصولات زیر به‌دلیل نبود موجودی کافی از سبد خرید حذف شدند و در سفارش ثبت نشدند: '
+                . implode('، ', $removedInventoryMessages);
+
+            if ($carts->isEmpty()) {
+                throw new \RuntimeException($inventoryMessage);
+            }
+
+            throw new \RuntimeException(
+                $inventoryMessage . ' لطفاً سبد خرید را بررسی و دوباره اقدام به پرداخت کنید.'
+            );
+        }
+
+        foreach ($carts as $cart) {
+            $limitError = $this->cartService->validateQuantityAgainstOrderLimit(
+                $cart->product,
+                (int) $cart->count
+            );
+            if ($limitError !== null) {
+                $productName = $cart->product->product_name ?? 'محصول';
+                throw new \RuntimeException($productName . ': ' . $limitError);
+            }
         }
 
         $address = Address::where('user_id', $user->id)->where('is_default', 1)->first();
@@ -431,28 +581,47 @@ class CartController extends Controller
         $send_time = Session::get('order_time', 0);
 
         [, $amountPayable, ] = $this->cartService->calculateCartTotals($carts);
-        $amountPayable += $send_price;
-
-        do {
-            $code = rand(10000, 99999);
-        } while (Order::where('code', $code)->exists());
+       // $amountPayable += $send_price;
 
         DB::beginTransaction();
         try {
-            $order = Order::create([
-                'code' => $code,
-                'customer_id' => $user->id,
+            // اگر سفارش پرداخت‌نشده قبلی هست، همان را با سبد فعلی به‌روز کن تا سفارش تکراری ساخته نشود
+            $order = Order::query()
+                ->where('customer_id', $user->id)
+                ->where('status', Order::STATUS_PENDING_PAYMENT)
+                ->latest('id')
+                ->first();
+
+            $orderData = [
                 'customer_name' => $user->name,
-                'status' => 0,
-                'status_title' => 'در انتظار پرداخت',
+                'status' => Order::STATUS_PENDING_PAYMENT,
+                'status_title' => Order::titleForStatus(Order::STATUS_PENDING_PAYMENT),
+                'payment_deadline_at' => Order::paymentDeadlineFromNow(),
                 'copan' => null,
                 'total_price' => $amountPayable,
-                'send_price' => $send_price,
+                'wallet_used_amount' => 0,
+                //'send_price' => $send_price,
+                'send_price' => $amountPayable,
                 'send_type' => $send_type,
                 'send_time' => $send_time,
                 'address_id' => $address->id,
                 'invoice' => $request_invoice,
-            ]);
+            ];
+
+            if ($order) {
+                $order->update($orderData);
+                OrderItem::where('order_id', $order->id)->delete();
+                $this->walletService->releasePaymentHold($order, true);
+            } else {
+                do {
+                    $code = rand(10000, 99999);
+                } while (Order::where('code', $code)->exists());
+
+                $order = Order::create(array_merge($orderData, [
+                    'code' => $code,
+                    'customer_id' => $user->id,
+                ]));
+            }
 
             foreach ($carts as $cart) {
                 $discount = $this->getDiscountService->getDiscount($cart->product_id);
@@ -466,14 +635,48 @@ class CartController extends Controller
                 ]);
             }
 
-            Cart::where('user_id', $user->id)->delete();
+            // سبد اینجا پاک نمی‌شود؛ فقط بعد از پرداخت موفق خالی می‌شود
             DB::commit();
 
-            return $order;
+            return $order->refresh();
         } catch (\Throwable $e) {
             DB::rollBack();
             throw $e;
         }
+    }
+
+    private function finalizePaidOrder(Order $order): void
+    {
+        if ($order->isCancelledToWallet() || $order->isInPaidLifecycle()) {
+            return;
+        }
+
+        $status = (int) $order->status;
+        if ($status !== Order::STATUS_PENDING_PAYMENT && $status !== Order::STATUS_PAYMENT_EXPIRED) {
+            return;
+        }
+
+        $this->walletService->ensurePaymentHold($order);
+
+        $order->refresh();
+        if ($order->isCancelledToWallet() || $order->isInPaidLifecycle()) {
+            return;
+        }
+
+        $order->update([
+            'status' => Order::STATUS_PAID,
+            'status_title' => Order::titleForStatus(Order::STATUS_PAID),
+        ]);
+
+        _log(
+            $order->id,
+            'status-' . Order::STATUS_PAID,
+            'orders',
+            'payment',
+            Order::titleForStatus(Order::STATUS_PAID)
+        );
+
+        Cart::where('user_id', $order->customer_id)->delete();
     }
 
     private function redirectAfterPaymentCallback(Order $order, bool $isSuccess, string $message)
@@ -485,5 +688,5 @@ class CartController extends Controller
             ])
             ->with('payment_message', $message);
     }
-   
+
 }

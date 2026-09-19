@@ -143,3 +143,32 @@ div.dt-container .dt-layout-cell.dt-layout-end {
     color: #fff;
 }
 
+.main-sidebar.sidebar-light-primary {
+    background-color: #f6f4fa;
+}
+
+.sidebar-light-primary .brand-link {
+    background-color: #f6f4fa;
+    border-bottom-color: rgba(105, 73, 156, 0.14);
+}
+
+.sidebar-light-primary .brand-link .brand-text,
+.sidebar-light-primary .user-panel .brand-text {
+    color: #2b145f;
+}
+
+.sidebar-light-primary .user-panel {
+    border-bottom-color: rgba(105, 73, 156, 0.14);
+}
+
+.sidebar-light-primary .nav-sidebar > .nav-item > .nav-link.active {
+    background-color: #69499C;
+    color: #fff;
+}
+
+.sidebar-light-primary .nav-sidebar > .nav-item.menu-open > .nav-link,
+.sidebar-light-primary .nav-sidebar > .nav-item:hover > .nav-link {
+    background-color: rgba(105, 73, 156, 0.08);
+    color: #2b145f;
+}
+

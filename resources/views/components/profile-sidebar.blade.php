@@ -33,42 +33,82 @@
 
     <!-- منوی ریسپانسیو (موبایل) -->
     <div class="responsive-profile-menu show-md">
-        <div class="btn-group">
-            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false">
-                <i class="fad fa-bars"></i>
-                حساب کاربری شما
-            </button>
-            <div class="dropdown-menu dropdown-menu-right text-right">
+        <div class="responsive-profile-menu-bar {{ $current === 'profile_personal_info' ? 'has-orders-btn' : '' }}">
+            <div class="btn-group">
+                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                    <i class="fad fa-bars"></i>
+                    حساب کاربری شما
+                </button>
+                <div class="dropdown-menu dropdown-menu-right text-right">
 
-                <a href="{{ route('profile_personal_info') }}"
-                   class="dropdown-item {{ $current === 'profile_personal_info' ? 'active' : '' }}">
-                    <i class="now-ui-icons users_single-02"></i> پروفایل
-                </a>
+                    <a href="{{ route('profile_personal_info') }}"
+                       class="dropdown-item {{ $current === 'profile_personal_info' ? 'active' : '' }}">
+                        <i class="now-ui-icons users_single-02"></i> پروفایل
+                    </a>
 
-                <a href="{{ route('profile_orders') }}"
-                   class="dropdown-item {{ $current === 'profile_orders' ? 'active' : '' }}">
-                    <i class="now-ui-icons shopping_basket"></i> همه سفارش‌ها
-                </a>
+                    <a href="{{ route('profile_orders') }}"
+                       class="dropdown-item {{ $current === 'profile_orders' ? 'active' : '' }}">
+                        <i class="now-ui-icons shopping_basket"></i> همه سفارش‌ها
+                    </a>
 
-                <a href="{{ route('profile_addresses') }}"
-                   class="dropdown-item {{ $current === 'profile_addresses' ? 'active' : '' }}">
-                    <i class="now-ui-icons location_pin"></i> آدرس‌ها
-                </a>
+                    <a href="{{ route('profile_wallet') }}"
+                       class="dropdown-item {{ $current === 'profile_wallet' ? 'active' : '' }}">
+                        <i class="now-ui-icons business_money-coins"></i> کیف پول
+                    </a>
 
-                <a href="{{ route('profile_orders_return') }}"
-                   class="dropdown-item {{ $current === 'profile_orders_return' ? 'active' : '' }}">
-                    <i class="now-ui-icons files_single-copy-04"></i> درخواست مرجوعی
-                </a>
+                    <a href="{{ route('profile_addresses') }}"
+                       class="dropdown-item {{ $current === 'profile_addresses' ? 'active' : '' }}">
+                        <i class="now-ui-icons location_pin"></i> آدرس‌ها
+                    </a>
 
-                <a href="{{ route('profile_favorites') }}"
-                   class="dropdown-item {{ $current === 'profile_favorites' ? 'active' : '' }}">
-                    <i class="now-ui-icons ui-2_favourite-28"></i> لیست علاقمندی‌ها
-                </a>
+                    <a href="{{ route('profile_orders_return') }}"
+                       class="dropdown-item {{ $current === 'profile_orders_return' ? 'active' : '' }}">
+                        <i class="now-ui-icons files_single-copy-04"></i> درخواست مرجوعی
+                    </a>
 
+                    <a href="{{ route('profile_favorites') }}"
+                       class="dropdown-item {{ $current === 'profile_favorites' ? 'active' : '' }}">
+                        <i class="now-ui-icons ui-2_favourite-28"></i> لیست علاقمندی‌ها
+                    </a>
+
+                </div>
             </div>
+
+            @if($current === 'profile_personal_info')
+                <a href="{{ route('profile_orders') }}" class="btn custom-primary profile-orders-mobile-btn">
+                    همه سفارش ها
+                </a>
+            @endif
         </div>
     </div>
+
+    <style>
+        .responsive-profile-menu-bar.has-orders-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .responsive-profile-menu-bar.has-orders-btn .btn-group {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .responsive-profile-menu-bar.has-orders-btn .btn-group > .btn {
+            width: 100%;
+        }
+
+        .profile-orders-mobile-btn {
+            flex: 0 0 auto;
+            white-space: nowrap;
+            color: #fff !important;
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+    </style>
 
     <!-- منوی دسکتاپ -->
     <div class="profile-menu hidden-md">
@@ -85,6 +125,13 @@
                 <a href="{{ route('profile_orders') }}"
                    class="{{ $current === 'profile_orders' ? 'active' : '' }}">
                     <i class="now-ui-icons shopping_basket"></i> همه سفارش‌ها
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ route('profile_wallet') }}"
+                   class="{{ $current === 'profile_wallet' ? 'active' : '' }}">
+                    <i class="now-ui-icons business_money-coins"></i> کیف پول
                 </a>
             </li>
 

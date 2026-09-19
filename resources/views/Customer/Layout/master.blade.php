@@ -30,8 +30,6 @@
     <!-- footer -->
 </div>
 
-@include('Customer.Layout.online-support')
-
 @include('Customer.Layout.script')
 @yield('script')
 
@@ -51,6 +49,6 @@
     </script> -->
 
 
-
+<script src="https://online.shil.ir/embed.js" async></script>
 </body>
 </html>

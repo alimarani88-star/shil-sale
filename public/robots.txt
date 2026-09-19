@@ -1,2 +1,49 @@
+# https://www.shil.ir/robots.txt
+
 User-agent: *
-Disallow:
+Allow: /
+
+# صفحات و مسیرهای خصوصی / بدون ارزش سئو
+Disallow: /A_
+Disallow: /ajax_
+Disallow: /api/
+Disallow: /dashboard
+Disallow: /offline
+Disallow: /login
+Disallow: /register
+Disallow: /logout
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /password
+Disallow: /email/
+Disallow: /verify-email
+Disallow: /confirm-password
+Disallow: /reset_password
+Disallow: /C_profile
+Disallow: /edit_profile
+Disallow: /profile_
+Disallow: /s_edit_profile
+Disallow: /s_profile_
+Disallow: /s_reset_password
+Disallow: /order_detail
+Disallow: /cart
+Disallow: /cart_
+Disallow: /add_product_to_cart
+Disallow: /update_count_product_cart
+Disallow: /remove_from_cart
+Disallow: /payment/
+Disallow: /payment_result
+Disallow: /payment1/
+Disallow: /register_customer
+Disallow: /storage/
+Disallow: /vendor/
+Disallow: /livewire/
+Disallow: /sanctum/
+Disallow: /up
+Disallow: /telescope
+Disallow: /horizon
+Disallow: /_debugbar
+Disallow: /_ignition
+
+# نقشه سایت
+Sitemap: https://www.shil.ir/sitemap.xml

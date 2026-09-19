@@ -259,3 +259,13 @@ function _log(
         'user_name' => $userName,
     ]);
 }
+
+function admin_can(?string $permission = null): bool
+{
+    return app(\App\Services\AdminAccessService::class)->can((string) $permission);
+}
+
+function admin_is_super_admin(): bool
+{
+    return app(\App\Services\AdminAccessService::class)->isSuperAdmin();
+}

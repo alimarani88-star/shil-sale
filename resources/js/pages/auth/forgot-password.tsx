@@ -1,4 +1,3 @@
-// Components
 import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import InputError from '@/components/input-error';
@@ -31,28 +30,17 @@ export default function ForgotPassword({ status, success, error }: ForgetProps) 
             didOpen: (toast) => {
                 toast.onmouseenter = Swal.stopTimer;
                 toast.onmouseleave = Swal.resumeTimer;
-            }
+            },
         });
 
         if (success) {
-            Toast.fire({
-                icon: 'success',
-                title: success
-            });
+            Toast.fire({ icon: 'success', title: success });
         }
-
         if (error) {
-            Toast.fire({
-                icon: 'error',
-                title: error
-            });
+            Toast.fire({ icon: 'error', title: error });
         }
-
         if (status) {
-            Toast.fire({
-                icon: 'success',
-                title: status
-            });
+            Toast.fire({ icon: 'success', title: status });
         }
     }, [success, error, status]);
 
@@ -62,37 +50,40 @@ export default function ForgotPassword({ status, success, error }: ForgetProps) 
     };
 
     return (
-        <AuthLayout title="فراموشی رمز عبور" description="برای دریافت کد بازیابی رمز عبور، موبایل خود را وارد کنید">
+        <AuthLayout
+            title="بازیابی رمز عبور"
+            description="شماره موبایل خود را وارد کنید تا کد بازیابی برای شما ارسال شود"
+        >
             <Head title="فراموشی رمز عبور" />
 
-            <div className="space-y-6">
-                <form onSubmit={submit}>
-                    <div className="grid gap-2">
-                        <Label htmlFor="mobile">شماره موبایل</Label>
-                        <Input
-                            id="mobile"
-                            type="mobile"
-                            name="mobile"
-                            autoComplete="off"
-                            value={data.mobile}
-                            autoFocus
-                            onChange={(e) => setData('mobile', e.target.value)}
-                            placeholder="09123456789"
-                        />
-                        <InputError message={errors.mobile} />
-                    </div>
-                    <div className="my-6 flex items-center justify-start">
-                        <Button className="w-full custom-primary" disabled={processing} style={{background:'#6a1b9a'}}>
-                            {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                            ارسال کد بازیابی رمز عبور
-                        </Button>
-                    </div>
-                </form>
-                <div className="text-muted-foreground space-x-1 text-center text-sm">
-                    <span>یا بازگشت به </span>
-                    <TextLink href={route('login')}>ورود</TextLink>
+            <form className="flex flex-col gap-5" onSubmit={submit}>
+                <div className="grid gap-2">
+                    <Label htmlFor="mobile">شماره موبایل</Label>
+                    <Input
+                        id="mobile"
+                        type="tel"
+                        name="mobile"
+                        autoComplete="off"
+                        value={data.mobile}
+                        autoFocus
+                        onChange={(e) => setData('mobile', e.target.value)}
+                        placeholder="09123456789"
+                    />
+                    <InputError message={errors.mobile} />
                 </div>
-            </div>
+
+                <Button type="submit" className="auth-submit mt-1 w-full" disabled={processing}>
+                    {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
+                    ارسال کد بازیابی
+                </Button>
+
+                <p className="pt-1 text-center text-sm text-slate-500">
+                    به یاد آوردید؟{' '}
+                    <TextLink href={route('login')} className="auth-link">
+                        بازگشت به ورود
+                    </TextLink>
+                </p>
+            </form>
         </AuthLayout>
     );
 }

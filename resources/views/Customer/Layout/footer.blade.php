@@ -84,7 +84,7 @@
                                 <a href="#">رویه‌های بازگرداندن کالا</a>
                             </li>
                             <li>
-                                <a href="https://app.shiliran.ir/warranty">ثبت گارانتی</a>
+                                <a href="https://app.shil.ir/warranty">ثبت گارانتی</a>
                             </li>
 
                         </ul>

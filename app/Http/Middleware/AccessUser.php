@@ -2,11 +2,9 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\User;
+use App\Services\AdminAccessService;
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
 use Symfony\Component\HttpFoundation\Response;
 
 class AccessUser
@@ -18,13 +16,23 @@ class AccessUser
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = User::find(Auth::id());
+        $access = app(AdminAccessService::class);
+        $user = $access->currentUser();
 
-        if ($user->type == 'user') {
-            return $next($request);
-        } else {
-            return Redirect::to('/');
+        if (!$access->isStaff($user)) {
+            return redirect()->to('/');
         }
+
+        if ($access->allowsCurrentRoute($user)) {
+            return $next($request);
+        }
+
+        $message = 'شما به این بخش دسترسی ندارید.';
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json(['message' => $message], 403);
+        }
+
+        return redirect()->route('A_home')->with('swal-error', $message);
     }
-    
 }

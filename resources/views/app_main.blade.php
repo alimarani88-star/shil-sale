@@ -7,6 +7,15 @@
     <meta name="description" content="خرید محصولات برق صنعتی شیل ایران شامل کلید مینیاتوری، محافظ جان، کنتاکتور، تجهیزات تابلو برق و لوازم جانبی با امکان ثبت سفارش آنلاین.">
 @endsection
 
+@section('head-tag')
+    <style>
+        a.banner-no-pointer,
+        a.banner-no-pointer img {
+            cursor: default !important;
+        }
+    </style>
+@endsection
+
 @section('content')
 
     <!-- main -->
@@ -41,11 +50,33 @@
                         <img src="assets/img/slider/slider-11.mp4" class="d-block w-100" alt="بنر ویدیویی محصولات برق صنعتی شیل ایران">
                     </a>
                 </div> -->
-                <div class="carousel-item active">
+                <!-- <div class="carousel-item active">
                     <a class="d-block" href="#">
                         <img src="assets/img/slider/slider-12.gif" class="d-block w-100" alt="بنر فروشگاه محصولات برق صنعتی شیل ایران">
                     </a>
+                </div> -->
+
+
+                 <div class="carousel-item active">
+                    <a class="d-block" href="#">
+                        <img src="assets/img/slider/slider_18.webp" class="d-block w-100" alt="بنر تجهیزات برق صنعتی شیل ایران">
+                    </a>
                 </div>
+
+                 <div class="carousel-item ">
+                    <a class="d-block" href="#">
+                        <img src="assets/img/slider/slider_22.webp" class="d-block w-100" alt="بنر فروش ویژه محصولات شیل ایران">
+                    </a>
+                </div>
+                <div class="carousel-item">
+                    <a class="d-block" href="#">
+                        <img src="assets/img/slider/slider_20.webp" class="d-block w-100" alt="بنر تجهیزات برق صنعتی شیل ایران">
+                    </a>
+                </div>
+
+
+
+
                  <!-- <div class="carousel-item">
                     <a class="d-block" href="#">
                         <img src="assets/img/slider/slider-22.gif" class="d-block w-100" alt="بنر فروش ویژه محصولات شیل ایران">
@@ -79,7 +110,7 @@
                 <i class="now-ui-icons arrows-1_minimal-left"></i>
             </a>
         </section>
-        <div class="container">
+        <div class="container-fluid">
             <section id="main-slider-mb" class="carousel slide carousel-fade card main-slider-st d-md-none"
                      data-ride="carousel">
                 <ol class="carousel-indicators">
@@ -91,24 +122,24 @@
                 <div class="carousel-inner">
                     <div class="carousel-item active">
                         <a class="d-block" href="#">
-                            <img src="assets/img/slider/001.jpg" class="d-block w-100" alt="بنر محصولات برق صنعتی شیل ایران">
+                            <img src="assets/img/slider/005.webp" class="d-block w-100" alt="بنر محصولات برق صنعتی شیل ایران">
                         </a>
                     </div>
                     <div class="carousel-item">
                         <a class="d-block" href="#">
-                            <img src="assets/img/slider/002.jpg" class="d-block w-100" alt="بنر تجهیزات تابلو برق شیل ایران">
+                            <img src="assets/img/slider/006.webp" class="d-block w-100" alt="بنر تجهیزات تابلو برق شیل ایران">
                         </a>
                     </div>
                     <div class="carousel-item">
                         <a class="d-block" href="#">
-                            <img src="assets/img/slider/003.jpg" class="d-block w-100" alt="بنر کلید مینیاتوری و محافظ جان شیل ایران">
+                            <img src="assets/img/slider/007.webp" class="d-block w-100" alt="بنر کلید مینیاتوری و محافظ جان شیل ایران">
                         </a>
                     </div>
-                    <div class="carousel-item">
+                    <!-- <div class="carousel-item">
                         <a class="d-block" href="#">
                             <img src="assets/img/slider/004.jpg" class="d-block w-100" alt="بنر خرید آنلاین تجهیزات برق صنعتی شیل ایران">
                         </a>
-                    </div>
+                    </div> -->
                 </div>
                 <a class="carousel-control-prev" href="#main-slider-mb" role="button" data-slide="prev">
                     <i class="now-ui-icons arrows-1_minimal-right"></i>
@@ -148,7 +179,7 @@
                                         <div class="row m-0">
                                             <div class="right-col col-5 d-flex align-items-center">
                                                 <a class="w-100 text-center"
-                                                   href="{{ route('show_product_by_id', $offerProduct->products->slug ?: $offerProduct->products->id) }}">
+                                                   href="{{ route('product', $offerProduct->products->slug ?: $offerProduct->products->id) }}">
                                                     @if($offerProduct->products)
                                                         <img
                                                             src="{{ url('get_image_by_id/' . $offerProduct->products->images->first()?->id) }}"
@@ -211,7 +242,7 @@
                                         <div class="item">
                                             <div class="el-product-card">
                                                 <div class="el-product-thumbnail">
-                                                    <a href="{{ route('show_product_by_id', $offerProduct->products->slug ?: $offerProduct->products->id) }}">
+                                                    <a href="{{ route('product', $offerProduct->products->slug ?: $offerProduct->products->id) }}">
 
                                                         <img
                                                             src="{{ url('get_image_by_id/' . $offerProduct->products->images->first()?->id) }}"
@@ -226,10 +257,6 @@
                                                         <h6><a href="#">{{ $offerProduct->product_name }}</a></h6>
                                                     </div>
                                                     <div class="el-product-info">
-                                                        <div class="el-product-status"><i class="fad fa-box-check"></i>
-                                                            موجود
-                                                            در انبار
-                                                        </div>
                                                         <div class="el-product-rating"><i class="fas fa-stars star"></i>
                                                             <strong></strong>
                                                             <span></span>
@@ -269,7 +296,8 @@
                 @foreach($category_banners as $banner)
                     <div class="col-6 col-lg-3">
                         <div class="widget-banner card">
-                            <a href="{{ route('products_category' , ["slug"=>$banner['slug']]) }}" target="_blank">
+                             <a href="{{ route('products_category' , ["slug"=>$banner['slug']]) }}" target="_blank">
+{{--                            <a href="#" target="_blank">--}}
                                 <img class="img-fluid" src="{{$banner['src']}}" alt="{{$banner['title']}} شیل ایران" title="{{$banner['title']}}">
                             </a>
                         </div>
@@ -290,13 +318,13 @@
                                 </h3>
                                 <a href="#" class="view-all">مشاهده همه</a>
                             </header>
-                            <div class="product-carousel owl-carousel owl-theme">
+                            <div class="product-carousel new-products-carousel owl-carousel owl-theme">
                                 @foreach ($lastProducts as $lastProduct)
                                     <div class="item">
                                         <div class="el-product-card">
 
                                             <div class="el-product-thumbnail">
-                                                <a href="{{ route('show_product_by_id', $lastProduct->slug ?: $lastProduct->id) }}">
+                                                <a href="{{ route('product', $lastProduct->slug ?: $lastProduct->id) }}">
                                                     <img
                                                         src="{{ url('get_image_by_id/' . $lastProduct->images->first()?->id) }}"
                                                         class="img-fluid"
@@ -311,20 +339,17 @@
                                             <div class="el-product-card-body">
                                                 <div class="el-product-title">
                                                     <h6>
-                                                        <a href="{{ route('show_product_by_id', $lastProduct->slug ?: $lastProduct->id) }}">
+                                                        <a href="{{ route('product', $lastProduct->slug ?: $lastProduct->id) }}">
                                                             {{ $lastProduct->product_name }}
                                                         </a>
                                                     </h6>
                                                 </div>
 
                                                 <div class="el-product-info">
-                                                    <div class="el-product-status">
-                                                        <i class="fad fa-box-check"></i> موجود در انبار
-                                                    </div>
                                                     <div class="el-product-rating">
                                                         <i class="fas fa-stars star"></i>
                                                         <strong></strong>
-                                                        <span>{{ $lastProduct->inventory }}</span>
+                                                        <span></span>
                                                     </div>
                                                 </div>
 
@@ -362,15 +387,15 @@
                     <div class="row">
                         <div class="col-12 col-lg-6">
                             <div class="widget-banner card">
-                                <a href="#" target="_blank">
-                                    <img class="img-fluid" src="assets/img/banner/battery.webp" alt="بنر تبلیغاتی تجهیزات برق صنعتی شیل ایران">
+                                <a href="#" target="_blank" class="banner-no-pointer">
+                                    <img class="img-fluid" src="assets/img/banner/banner_2004.webp" alt="بنر تبلیغاتی تجهیزات برق صنعتی شیل ایران">
                                 </a>
                             </div>
                         </div>
                         <div class="col-12 col-lg-6">
                             <div class="widget-banner card">
-                                <a href="#" target="_top">
-                                    <img class="img-fluid" src="assets/img/banner/inverter.webp" alt="بنر تبلیغاتی محصولات شیل ایران">
+                                <a href="#" target="_top" class="banner-no-pointer">
+                                    <img class="img-fluid" src="assets/img/banner/banner_2003.webp" alt="بنر تبلیغاتی محصولات شیل ایران">
                                 </a>
                             </div>
                         </div>
@@ -378,90 +403,15 @@
                 </div>
             </div>
 
-            {{--            بیشترین بازدید ها--}}
-            @if($topProducts->count())
-                <div class="row">
-                    <div class="col-12">
-                        <div class="widget widget-product card">
-                            <header class="card-header">
-                                <h3 class="card-title">
-                                    <span>بیشترین بازدید ها</span>
-                                </h3>
-                                <a href="#" class="view-all">مشاهده همه</a>
-                            </header>
-                            <div class="product-carousel owl-carousel owl-theme">
-                                @foreach ($topProducts as $topProduct)
-                                    <div class="item">
-                                        <div class="el-product-card">
 
-                                            <div class="el-product-thumbnail">
-                                                <a href="{{ route('show_product_by_id', $topProduct->slug ?: $topProduct->id) }}">
-
-                                                    <img
-                                                        src="{{ url('get_image_by_id/' . $topProduct->images->first()?->id) }}"
-                                                        class="img-fluid"
-                                                        style="object-fit: contain;"
-                                                        alt="خرید {{ $topProduct->product_name }} از شیل ایران">
-                                                </a>
-
-
-                                            </div>
-
-
-                                            <div class="el-product-card-body">
-                                                <div class="el-product-title">
-                                                    <h6>
-                                                        <a href="{{ route('show_product_by_id', $topProduct->slug ?: $topProduct->id) }}">
-                                                            {{ $topProduct->product_name }}
-                                                        </a>
-                                                    </h6>
-                                                </div>
-
-                                                <div class="el-product-info">
-                                                    <div class="el-product-status">
-                                                        <i class="fad fa-box-check"></i> موجود در انبار
-                                                    </div>
-                                                    <div class="el-product-rating">
-                                                        <i class="fas fa-stars star"></i>
-                                                        <strong></strong>
-                                                        <span>{{ $topProduct->inventory }}</span>
-                                                    </div>
-                                                </div>
-
-                                                <div class="el-product-price">
-                                                <span
-                                                    class="el-price-value">{{ number_format($topProduct->price) }}</span>
-                                                    <span class="el-price-currency">{{ $topProduct->price_unit }}</span>
-                                                </div>
-                                            </div>
-
-
-                                            <div class="el-product-card-footer">
-                                                <div class="el-product-seller-details">
-                                                    <i class="fad fa-store-alt"></i>
-                                                    <span class="el-product-seller-details-label">فروشنده:</span>
-                                                    <span class="el-product-seller-details--name">شیل ایران</span>
-                                                    <img src="{{ asset('assets/img/logo-icon.png') }}"
-                                                         class="el-product-seller-details--logo-small"
-                                                         alt="لوگوی فروشگاه شیل ایران">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            @endif
             <div class="row banner-ads">
                 <div class="col-12">
                     <div class="row">
                         <div class="col-12">
                             <div class="widget widget-banner card">
-                                <a href="#" target="_blank">
-                                    <img class="img-fluid" src="assets/img/banner/baner-22.jpg" alt="بنر معرفی محصولات برق صنعتی شیل ایران">
+                                <a href="https://wa.me/989135454140" target="_blank" rel="noopener noreferrer">
+                                    <!-- <img class="img-fluid" src="assets/img/banner/baner-22.jpg" alt="بنر معرفی محصولات برق صنعتی شیل ایران"> -->
+                                    <img class="img-fluid" src="assets/img/banner/baner-25.webp" alt="ثبت سفارش و مشاوره فنی رایگان شیل ایران در واتساپ">
                                 </a>
                             </div>
                         </div>

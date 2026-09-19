@@ -38,6 +38,35 @@ class ProductController extends Controller
         return view('Admin.Product.A_show_product', compact('products'));
     }
 
+    public function A_select_new_products()
+    {
+        $products = Product::with('images')->orderBy('created_at', 'desc')->get();
+
+        return view('Admin.Product.A_select_new_products', compact('products'));
+    }
+
+    public function A_s_select_new_products(Request $request)
+    {
+        $validated = $request->validate([
+            'product_ids' => ['nullable', 'array'],
+            'product_ids.*' => ['integer', 'exists:products,id'],
+        ]);
+
+        $selectedIds = $validated['product_ids'] ?? [];
+
+        DB::transaction(function () use ($selectedIds) {
+            Product::query()->update(['new_product' => 0]);
+
+            if (!empty($selectedIds)) {
+                Product::whereIn('id', $selectedIds)->update(['new_product' => 1]);
+            }
+        });
+
+        return redirect()
+            ->route('A_select_new_products')
+            ->with('swal-success', 'محصولات جدیدترین‌ها با موفقیت ذخیره شد');
+    }
+
     public function A_create_product()
     {
         $groups = $this->api->getGroups();

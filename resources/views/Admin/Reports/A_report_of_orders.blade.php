@@ -212,18 +212,17 @@
                             @foreach($orders as $order)
                                 @php
                                     $statusClass = match ((int) $order->status) {
-                                        0 => 'status-pending',
-                                        1 => 'status-paid',
-                                        2 => 'status-cancelled',
+                                        \App\Models\Order::STATUS_PENDING_PAYMENT => 'status-pending',
+                                        \App\Models\Order::STATUS_PAID,
+                                        \App\Models\Order::STATUS_PAYMENT_CONFIRMED,
+                                        \App\Models\Order::STATUS_INVOICED,
+                                        \App\Models\Order::STATUS_SHIPPED => 'status-paid',
+                                        \App\Models\Order::STATUS_PAYMENT_EXPIRED,
+                                        \App\Models\Order::STATUS_CANCELLED_TO_WALLET => 'status-cancelled',
                                         default => 'status-default',
                                     };
 
-                                    $statusTitle = $order->status_title ?: match ((int) $order->status) {
-                                        0 => 'در انتظار پرداخت',
-                                        1 => 'پرداخت شده',
-                                        2 => 'لغو شده',
-                                        default => 'نامشخص',
-                                    };
+                                    $statusTitle = $order->resolvedStatusTitle();
 
                                     $finalPrice = (int) $order->total_price + (int) $order->send_price;
                                 @endphp

@@ -19,7 +19,7 @@
             .cart-page {
                 padding: 0.5rem 0;
             }
-            
+
 
             .container {
                 padding: 0;
@@ -579,7 +579,12 @@
                                             <span>مبلغ کل ({{count($carts)}} کالا)</span>
                                             <span>{{ number_format($amountPayable ?? 0) }} ریال</span>
                                         </li>
-                           
+                                        @if(($walletWillUse ?? 0) > 0)
+                                            <li>
+                                                <span>استفاده از کیف پول</span>
+                                                <span>{{ number_format($walletWillUse) }} ریال</span>
+                                            </li>
+                                        @endif
                                     </ul>
                                     <div class="checkout-summary-devider">
                                         <div></div>
@@ -588,12 +593,23 @@
                                         <div class="checkout-summary-price-title">مبلغ قابل پرداخت:</div>
                                         <div class="checkout-summary-price-value">
                                             <span
-                                                class="checkout-summary-price-value-amount">{{ number_format($amountPayable ?? 0) }}</span>
+                                                class="checkout-summary-price-value-amount">{{ number_format($gatewayAmount ?? $amountPayable ?? 0) }}</span>
                                             ریال
                                         </div>
-                                        <a href="{{ route('cart_payment') }}" class="selenium-next-step-shipping">
+                                        @if(($walletBalance ?? 0) > 0)
+                                            <div class="mb-2" style="font-size: 12px; color: #555;">
+                                                موجودی کیف پول: {{ number_format($walletBalance) }} ریال
+                                                @if(($walletWillUse ?? 0) > 0 && ($gatewayAmount ?? 0) <= 0)
+                                                    — این سفارش کامل از کیف پول پرداخت می‌شود.
+                                                @elseif(($walletWillUse ?? 0) > 0)
+                                                    — مبلغ باقیمانده از درگاه بانکی کسر می‌شود.
+                                                @endif
+                                            </div>
+                                        @endif
+                                        <span style="color: #0a5c3a">مرسوله به صورت پس کرایه ارسال می گردد</span>
+                                        <a href="{{ route('cart_payment') }}" class="selenium-next-step-shipping js-disable-after-click">
                                             <div class="parent-btn">
-                                                <button class="dk-btn custom-primary" style="font-size: 16px;">
+                                                <button type="button" class="dk-btn custom-primary" style="font-size: 16px;">
                                                     <i class="now-ui-icons shopping_basket"></i>
                                                     ادامه ثبت سفارش
                                                 </button>
@@ -604,39 +620,74 @@
                                                 کالاهای موجود در سبد شما ثبت و رزرو نشده‌اند، برای ثبت سفارش مراحل بعدی را
                                                 تکمیل کنید.
                                             </span>
-                                            <span class="wiki wiki-holder">
-                                                <span class="wiki-sign"></span>
-                                                <div class="wiki-container is-right">
-                                                    <div class="wiki-arrow"></div>
-                                                    <p class="wiki-text">
-                                                        محصولات موجود در سبد خرید شما تنها در صورت ثبت و پرداخت سفارش برای
-                                                        شما رزرو می‌شوند.
-                                                        در صورت عدم ثبت سفارش، تاپ کالا هیچگونه مسئولیتی در قبال تغییر قیمت
-                                                        یا موجودی این کالاها ندارد.
-                                                    </p>
-                                                </div>
-                                            </span>
+{{--                                            <span class="wiki wiki-holder">--}}
+{{--                                                <span class="wiki-sign"></span>--}}
+{{--                                                <div class="wiki-container is-right">--}}
+{{--                                                    <div class="wiki-arrow"></div>--}}
+{{--                                                    <p class="wiki-text">--}}
+{{--                                                        محصولات موجود در سبد خرید شما تنها در صورت ثبت و پرداخت سفارش برای--}}
+{{--                                                        شما رزرو می‌شوند.--}}
+{{--                                                        در صورت عدم ثبت سفارش، تاپ کالا هیچگونه مسئولیتی در قبال تغییر قیمت--}}
+{{--                                                        یا موجودی این کالاها ندارد.--}}
+{{--                                                    </p>--}}
+{{--                                                </div>--}}
+{{--                                            </span>--}}
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="checkout-feature-aside">
-                                <ul>
-                                    <li class="checkout-feature-aside-item checkout-feature-aside-item-guarantee">
-                                        هفت روز ضمانت تعویض
-                                    </li>
-                                    <li class="checkout-feature-aside-item checkout-feature-aside-item-cash">
-                                        پرداخت در محل با کارت بانکی
-                                    </li>
-                                    <li class="checkout-feature-aside-item checkout-feature-aside-item-express">
-                                        تحویل اکسپرس
-                                    </li>
-                                </ul>
-                            </div>
+{{--                            <div class="checkout-feature-aside">--}}
+{{--                                <ul>--}}
+{{--                                    <li class="checkout-feature-aside-item checkout-feature-aside-item-guarantee">--}}
+{{--                                        هفت روز ضمانت تعویض--}}
+{{--                                    </li>--}}
+{{--                                    <li class="checkout-feature-aside-item checkout-feature-aside-item-cash">--}}
+{{--                                        پرداخت در محل با کارت بانکی--}}
+{{--                                    </li>--}}
+{{--                                    <li class="checkout-feature-aside-item checkout-feature-aside-item-express">--}}
+{{--                                        تحویل اکسپرس--}}
+{{--                                    </li>--}}
+{{--                                </ul>--}}
+{{--                            </div>--}}
                         </div>
                     </aside>
                 </div>
             </div>
         </main>
     </div>
+@endsection
+
+@section('script')
+    <script>
+        (function () {
+            function disablePayLink(link) {
+                if (!link || link.getAttribute('aria-disabled') === 'true') {
+                    return;
+                }
+                link.setAttribute('aria-disabled', 'true');
+                link.style.pointerEvents = 'none';
+                link.style.opacity = '0.65';
+                var btn = link.querySelector('button');
+                if (btn) {
+                    btn.disabled = true;
+                }
+            }
+
+            document.querySelectorAll('.js-disable-after-click').forEach(function (el) {
+                el.addEventListener('click', function (e) {
+                    if (el.getAttribute('aria-disabled') === 'true') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return;
+                    }
+                    var href = el.getAttribute('href');
+                    document.querySelectorAll('.js-disable-after-click').forEach(function (link) {
+                        if (link.getAttribute('href') === href) {
+                            disablePayLink(link);
+                        }
+                    });
+                }, true);
+            });
+        })();
+    </script>
 @endsection

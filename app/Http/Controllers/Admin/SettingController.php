@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\EditCompanyInfoRequest;
 use App\Models\CompanyInfo;
+use App\Models\ContactMessage;
+use App\CustomClass\Jdf;
 
 use function PHPUnit\Framework\callback;
 
@@ -19,6 +21,19 @@ class SettingController extends Controller
         $company_info = CompanyInfo::pluck('value', key: 'title');
         return view("Admin.Setting.A_edit_contact", compact('company_info'));
     }
+
+    public function A_contact_messages()
+    {
+        $date = new Jdf();
+        $contactMessages = ContactMessage::query()->latest('id')->paginate(20);
+
+        foreach ($contactMessages as $contactMessage) {
+            $contactMessage->created_at_jalali = $date->toJalali_with_time($contactMessage->created_at);
+        }
+
+        return view('Admin.Setting.A_contact_messages', compact('contactMessages'));
+    }
+
     public function A_edit_about()
     {
         $company_info = CompanyInfo::where('title', 'text_about')->first();

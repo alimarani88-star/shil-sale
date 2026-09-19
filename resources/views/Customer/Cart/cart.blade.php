@@ -162,7 +162,8 @@
                                 <table class="table">
                                     <tbody>
                                         @foreach($carts as $cart)
-                                            <tr class="checkout-item" data-id="{{ $cart->product_id }}">
+                                            <tr class="checkout-item" data-id="{{ $cart->product_id }}"
+                                                data-max-order="{{ $cart->maximum_order_limit ?? '' }}">
                                                 <td>
                                                     <img style="width: 6rem;"
                                                         src="{{ url('get_image_by_id/' . $cart->product->images->first()->id) }}"
@@ -183,7 +184,9 @@
                                                     <div class="d-flex align-items-center">
                                                         <button type="button"
                                                             class="btn btn-sm btn-outline-secondary qty-btn qty-decrease">−</button>
-                                                        <input type="number" min="1" max="10000" value="{{ $cart->count ?? 1 }}"
+                                                        <input type="number" min="1"
+                                                            @if(!empty($cart->maximum_order_limit)) max="{{ (int) $cart->maximum_order_limit }}" @else max="10000" @endif
+                                                            value="{{ $cart->count ?? 1 }}"
                                                             class="form-control text-center mx-2 product-qty" style="width:80px;">
                                                         <button type="button"
                                                             class="btn btn-sm btn-outline-secondary qty-btn qty-increase custom-primary">+</button>
@@ -207,7 +210,8 @@
                             <!-- نسخه موبایل: کارت -->
                             <div class="cart-card-mobile" style="display: none;">
                                 @foreach($carts as $cart)
-                                    <div class="cart-item-card" data-id="{{ $cart->product_id }}">
+                                    <div class="cart-item-card" data-id="{{ $cart->product_id }}"
+                                        data-max-order="{{ $cart->maximum_order_limit ?? '' }}">
                                         <!-- دکمه حذف -->
                                         <button class="checkout-btn-remove" data-id="{{ $cart->product_id }}"></button>
 
@@ -240,7 +244,9 @@
                                                     <div class="row" style="align-items: center;">
                                                         <button type="button"
                                                             class="btn btn-sm btn-outline-secondary qty-btn qty-decrease">−</button>
-                                                        <input type="number" min="1" max="10000" value="{{ $cart->count ?? 1 }}"
+                                                        <input type="number" min="1"
+                                                            @if(!empty($cart->maximum_order_limit)) max="{{ (int) $cart->maximum_order_limit }}" @else max="10000" @endif
+                                                            value="{{ $cart->count ?? 1 }}"
                                                             class="form-control text-center product-qty">
                                                         <button type="button"
                                                             class="btn btn-sm btn-outline-secondary qty-btn qty-increase custom-primary">+</button>
@@ -377,35 +383,68 @@
         });
 
         $(document).on('click', '.qty-increase', function () {
-            const container = $(this).closest('tr, .cart-item-card'); // هم tr و هم div
+            const container = $(this).closest('tr, .cart-item-card');
             const input = container.find('.product-qty');
             const productId = container.data('id');
+            const maxOrder = parseInt(container.attr('data-max-order'), 10);
 
             let current = parseInt(input.val()) || 1;
+            if (!isNaN(maxOrder) && maxOrder > 0 && current >= maxOrder) {
+                input.val(maxOrder);
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'warning',
+                    title: 'حداکثر تعداد مجاز سفارش این محصول ' + maxOrder + ' عدد هست . لطفا برای سفارش بیشتر با واحد فروش به شماره 03133122 تماس حاصل فرمایید',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+                return;
+            }
+            input.data('prev-qty', current);
             input.val(current + 1);
-            updateCartQuantity(productId, current + 1);
+            updateCartQuantity(productId, current + 1, input);
         });
 
         $(document).on('click', '.qty-decrease', function () {
-            const container = $(this).closest('tr, .cart-item-card'); // هم tr و هم div
+            const container = $(this).closest('tr, .cart-item-card');
             const input = container.find('.product-qty');
             const productId = container.data('id');
 
             let current = parseInt(input.val()) || 1;
             if (current > 1) {
+                input.data('prev-qty', current);
                 input.val(current - 1);
-                updateCartQuantity(productId, current - 1);
+                updateCartQuantity(productId, current - 1, input);
             }
         });
 
         $(document).on('blur', '.product-qty', function () {
-            const container = $(this).closest('tr, .cart-item-card'); // هم tr و هم div
+            const container = $(this).closest('tr, .cart-item-card');
             const productId = container.data('id');
-            const qty = parseInt($(this).val()) || 1;
-            updateCartQuantity(productId, qty);
+            const input = $(this);
+            const maxOrder = parseInt(container.attr('data-max-order'), 10);
+            let qty = parseInt(input.val()) || 1;
+            if (qty < 1) qty = 1;
+            if (!isNaN(maxOrder) && maxOrder > 0 && qty > maxOrder) {
+                qty = maxOrder;
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'warning',
+                    title: 'حداکثر تعداد مجاز سفارش این محصول ' + maxOrder + ' عدد هست . لطفا برای سفارش بیشتر با واحد فروش به شماره 03133122 تماس حاصل فرمایید',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+            }
+            input.data('prev-qty', parseInt(input.data('prev-qty')) || qty);
+            input.val(qty);
+            updateCartQuantity(productId, qty, input);
         });
 
-        function updateCartQuantity(productId, qty) {
+        function updateCartQuantity(productId, qty, input) {
             $.ajax({
                 url: '{{ route("update_count_product_cart") }}',
                 type: 'POST',
@@ -418,6 +457,9 @@
                     if (result.status === 'success') {
                         const data = result.data;
                         const cart = data.cart;
+                        if (input) {
+                            input.data('prev-qty', qty);
+                        }
 
                         // آپدیت هم نسخه دسکتاپ و هم موبایل
                         const containers = $(`tr[data-id="${cart.product_id}"], .cart-item-card[data-id="${cart.product_id}"]`);
@@ -450,30 +492,31 @@
                     }
                 },
                 error: function (xhr) {
-                    if (xhr.status === 422) {
-                        let errors = xhr.responseJSON.errors;
-                        let firstError = Object.values(errors)[0][0];
-
-                        Swal.fire({
-                            toast: true,
-                            position: 'top-end',
-                            icon: 'error',
-                            title: firstError,
-                            showConfirmButton: false,
-                            timer: 3000,
-                            timerProgressBar: true
-                        });
-                    } else {
-                        Swal.fire({
-                            toast: true,
-                            position: 'top-end',
-                            icon: 'error',
-                            title: 'خطایی رخ داد، لطفاً مجدداً تلاش کنید.',
-                            showConfirmButton: false,
-                            timer: 3000,
-                            timerProgressBar: true
-                        });
+                    const prevQty = input
+                        ? (parseInt(input.data('prev-qty')) || 1)
+                        : (xhr.responseJSON && xhr.responseJSON.data ? xhr.responseJSON.data.current_count : 1);
+                    if (input) {
+                        input.val(prevQty);
                     }
+                    const containers = $(`tr[data-id="${productId}"], .cart-item-card[data-id="${productId}"]`);
+                    containers.find('.product-qty').val(prevQty);
+
+                    let message = 'خطایی رخ داد، لطفاً مجدداً تلاش کنید.';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        message = xhr.responseJSON.message;
+                    } else if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
+                        message = Object.values(xhr.responseJSON.errors)[0][0];
+                    }
+
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'error',
+                        title: message,
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
+                    });
                 }
             });
         }

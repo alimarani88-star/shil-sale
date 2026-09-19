@@ -3,6 +3,15 @@
 @section('head-tag')
     <link href="{{ asset('assets/css/plugins/AddTags.css') }}" rel="stylesheet"/>
     <link rel="stylesheet" href="{{ asset('plugins/leaflet/leaflet.css') }}" />
+    <style>
+        .contact-hp {
+            position: absolute;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+        }
+    </style>
 @endsection
 @section('meta')
     <meta name="description"
@@ -98,46 +107,73 @@
                         <i class="fa fa-paper-plane custom-cl-primary me-2"></i>
                     </h5>
 
-                    {{-- <form action="{{ route('contact.send') }}" method="POST"> --}}
-                    @csrf
+                    <form action="{{ route('contact.send') }}" method="POST" autocomplete="off">
+                        @csrf
 
-                    <div class="mb-3">
-                        <label class="form-label">
-                            نام شما
-                            <i class="fa fa-user me-2 custom-cl-primary"></i>
-                        </label>
-                        <input type="text" name="name" class="form-control" placeholder="نام و نام خانوادگی" required>
-                    </div>
+                        <div class="contact-hp" aria-hidden="true">
+                            <label for="website">وب‌سایت</label>
+                            <input type="text" name="website" id="website" tabindex="-1" autocomplete="off">
+                        </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">
-                            ایمیل
-                            <i class="fa fa-envelope me-2 custom-cl-primary"></i>
-                        </label>
-                        <input type="email" name="email" class="form-control" placeholder="example@example.com"
-                            required>
-                    </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="contact-name">
+                                نام شما
+                                <i class="fa fa-user me-2 custom-cl-primary"></i>
+                            </label>
+                            <input type="text" name="name" id="contact-name" class="form-control"
+                                value="{{ old('name') }}" placeholder="نام و نام خانوادگی" maxlength="80" required>
+                            @error('name')
+                                <span class="text-danger d-block mt-1">{{ $message }}</span>
+                            @enderror
+                        </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">
-                            موضوع
-                            <i class="fa fa-info-circle me-2 custom-cl-primary"></i>
-                        </label>
-                        <input type="text" name="subject" class="form-control" placeholder="عنوان پیام" required>
-                    </div>
+                        @if(auth()->user()?->contactMobile())
+                            <p class="mb-3 text-muted" style="font-size: 13px;">
+                                شماره موبایل از حساب کاربری شما استفاده می‌شود.
+                            </p>
+                        @else
+                        <div class="mb-3">
+                            <label class="form-label" for="contact-mobile">
+                                شماره موبایل
+                                <i class="fa fa-mobile-alt me-2 custom-cl-primary"></i>
+                            </label>
+                            <input type="text" name="mobile" id="contact-mobile" class="form-control"
+                                value="{{ old('mobile') }}" placeholder="09123456789" maxlength="11"
+                                inputmode="numeric" autocomplete="tel" required>
+                            @error('mobile')
+                                <span class="text-danger d-block mt-1">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        @endif
 
-                    <div class="mb-3">
-                        <label class="form-label">
-                            متن پیام
-                            <i class="fa fa-comment-dots me-2 custom-cl-primary"></i>
-                        </label>
-                        <textarea name="message" class="form-control" rows="5" placeholder="پیام خود را بنویسید..." required></textarea>
-                    </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="contact-subject">
+                                موضوع
+                                <i class="fa fa-info-circle me-2 custom-cl-primary"></i>
+                            </label>
+                            <input type="text" name="subject" id="contact-subject" class="form-control"
+                                value="{{ old('subject') }}" placeholder="عنوان پیام" maxlength="120" required>
+                            @error('subject')
+                                <span class="text-danger d-block mt-1">{{ $message }}</span>
+                            @enderror
+                        </div>
 
-                    <button type="submit" class="btn w-100 text-white mt-5 custom-primary">
-                        ارسال پیام
-                    </button>
-                    {{-- </form> --}}
+                        <div class="mb-3">
+                            <label class="form-label" for="contact-message">
+                                متن پیام
+                                <i class="fa fa-comment-dots me-2 custom-cl-primary"></i>
+                            </label>
+                            <textarea name="message" id="contact-message" class="form-control" rows="5"
+                                placeholder="پیام خود را بنویسید..." maxlength="2000" required>{{ old('message') }}</textarea>
+                            @error('message')
+                                <span class="text-danger d-block mt-1">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <button type="submit" class="btn w-100 text-white mt-5 custom-primary">
+                            ارسال پیام
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>

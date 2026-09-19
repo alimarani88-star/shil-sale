@@ -28,7 +28,7 @@ $(document).ready(function () {
   }
 
   // **************  product slider
-  $(".product-carousel").owlCarousel({
+  $(".product-carousel").not(".new-products-carousel").owlCarousel({
     rtl: true,
     margin: 10,
     nav: true,
@@ -37,6 +37,41 @@ $(document).ready(function () {
       '<i class="now-ui-icons arrows-1_minimal-left"></i>',
     ],
     dots: false,
+    responsiveClass: true,
+    responsive: {
+      0: {
+        items: 2,
+        slideBy: 1,
+      },
+      576: {
+        items: 3,
+        slideBy: 1,
+      },
+      768: {
+        items: 4,
+        slideBy: 2,
+      },
+      992: {
+        items: 5,
+        slideBy: 2,
+      },
+    },
+  });
+
+  // جدیدترین‌ها — اسکرول خودکار به سمت راست
+  $(".new-products-carousel").owlCarousel({
+    rtl: true,
+    margin: 10,
+    nav: true,
+    navText: [
+      '<i class="now-ui-icons arrows-1_minimal-right"></i>',
+      '<i class="now-ui-icons arrows-1_minimal-left"></i>',
+    ],
+    dots: false,
+    loop: true,
+    autoplay: true,
+    autoplayTimeout: 3000,
+    autoplayHoverPause: true,
     responsiveClass: true,
     responsive: {
       0: {

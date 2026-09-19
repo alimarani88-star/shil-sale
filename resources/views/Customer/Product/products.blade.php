@@ -250,19 +250,18 @@
                                                     <li class="col-xl-3 col-lg-4 col-md-6 col-12 no-padding">
                                                         <div class="el-product-card">
                                                             <div class="el-product-thumbnail">
-                                                                <a href="{{ route('show_product_by_id', ($product['slug'] ?? null) ?: $product['id']) }}">
+                                                                <a href="{{ route('product', ($product['slug'] ?? null) ?: $product['id']) }}">
                                                                     <img src="{{$product['mainImage'] ? $product['mainImage'] : asset('assets/img/no-image.jpg')}}" class="img-fluid"  alt="خرید {{ $product['product_name'] }} از شیل ایران">
                                                                 </a>
                                                             </div>
                                                             <div class="el-product-card-body">
                                                                 <div class="el-product-title">
-                                                                    <h6><a href="{{ route('show_product_by_id', ($product['slug'] ?? null) ?: $product['id']) }}">{{$product['product_name']}}</a></h6>
+                                                                    <h6><a href="{{ route('product', ($product['slug'] ?? null) ?: $product['id']) }}">{{$product['product_name']}}</a></h6>
                                                                 </div>
                                                                 <div class="el-product-info">
-                                                                    <div class="el-product-status"><i class="fad fa-box-check"></i> موجود در انبار</div>
                                                                     <div class="el-product-rating">
                                                                         <i class="fas fa-stars star"></i>
-                                                                        <strong>5</strong>
+                                                                        <strong></strong>
                                                                     </div>
                                                                 </div>
                                                                 <div class="el-product-price">
@@ -404,7 +403,7 @@
                 const notImage = '{{asset('assets/img/no-image.jpg')}}';
                 const logoImage = '{{asset('assets/img/logo-icon.png')}}';
                 const productSlug = item.slug || item.id;
-                const productUrl = `/show_product_by_id/${encodeURIComponent(productSlug)}`;
+                const productUrl = `/product/${encodeURIComponent(productSlug)}`;
                 const formattedPrice = formatPrice(item.price);
 
                 const html = `
@@ -420,10 +419,9 @@
                         <h6><a href="${productUrl}">${item.product_name}</a></h6>
                     </div>
                     <div class="el-product-info">
-                        <div class="el-product-status"><i class="fad fa-box-check"></i> موجود در انبار</div>
                         <div class="el-product-rating">
                             <i class="fas fa-stars star"></i>
-                            <strong>5</strong>
+                            <strong></strong>
                         </div>
                     </div>
                     <div class="el-product-price">
@@ -530,6 +528,17 @@
 
             $('.filter_menu').on('click', '.filter_category-link', function(e) {
                 e.preventDefault();
+                e.stopPropagation();
+
+                const $li = $(this).closest('.filter-item-li');
+                const $submenu = $li.children('.filter_submenu');
+                const $menuItem = $li.children('.filter_menu-item');
+                if ($submenu.length) {
+                    $submenu.toggleClass('open');
+                    $menuItem.toggleClass('open');
+                    return;
+                }
+
                 const id = $(this).data('group');
                 const url = new URL(window.location.href);
                 url.searchParams.set('g', id);

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\QueueMonitorController;
+use App\Http\Controllers\Admin\StaffAccessController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\Admin\DiscountController;
 use App\Http\Controllers\Admin\ProductController;
@@ -16,8 +18,13 @@ use Inertia\Inertia;
 
 //Route::get('/', function () {return Inertia::render('welcome');})->name('home');
 Route::get('/', [IndexController::class, 'home'])->name('home');
+
+// آدرس سئوپسند محصول
+Route::get('/product/{slug}', [IndexController::class, 'show_product_by_id'])->name('product');
+
+// سازگاری با آدرس‌های قدیمی (ریدایرکت دائمی 301)
 Route::get('/show_product_by_id/{id}', [IndexController::class, 'redirect_product_by_id'])->where('id', '[0-9]+')->name('show_product_by_id_legacy');
-Route::get('/show_product_by_id/{slug}', [IndexController::class, 'show_product_by_id'])->name('show_product_by_id');
+Route::get('/show_product_by_id/{slug}', [IndexController::class, 'redirect_product_by_slug'])->name('show_product_by_id');
 
 
 // products routes
@@ -48,6 +55,8 @@ Route::middleware(['auth', 'verified', 'AccessUser'])->group(function () {
     Route::get('/A_edit_product/{product}', [ProductController::class, 'A_edit_product'])->name('A_edit_product');
     Route::put('/A_s_edit_product/{product}', [ProductController::class, 'A_s_edit_product'])->name('A_s_edit_product');
     Route::delete('/A_inactive_product/{product}', [ProductController::class, 'A_inactive_product'])->name('A_inactive_product');
+    Route::get('/A_select_new_products', [ProductController::class, 'A_select_new_products'])->name('A_select_new_products');
+    Route::post('/A_s_select_new_products', [ProductController::class, 'A_s_select_new_products'])->name('A_s_select_new_products');
 
 
     //Discount
@@ -83,6 +92,7 @@ Route::middleware(['auth', 'verified', 'AccessUser'])->group(function () {
     Route::post('/A_ajax_image_uploader', [\App\Http\Controllers\Admin\PostController::class, 'A_ajax_image_uploader'])->name('A_ajax_image_uploader');
     Route::post('/ajax_check_slug_title', [\App\Http\Controllers\Admin\PostController::class, 'ajax_check_slug_title'])->name('ajax_check_slug_title');
     Route::post('/A_ajax_remove_image', [\App\Http\Controllers\Admin\PostController::class, 'A_ajax_remove_image'])->name('A_ajax_remove_image');
+    Route::post('/A_ajax_remove_file', [\App\Http\Controllers\Admin\PostController::class, 'A_ajax_remove_file'])->name('A_ajax_remove_file');
 
 
     // category
@@ -95,17 +105,20 @@ Route::middleware(['auth', 'verified', 'AccessUser'])->group(function () {
     Route::get('/A_show_category_tree', [\App\Http\Controllers\Admin\CategoryController::class, 'A_show_category_tree'])->name('A_show_category_tree');
 
 
-    // client comment
-    Route::post('/create_comment', [\App\Http\Controllers\Customer\ClientCommentController::class, 'create_comment'])->name('create_comment');
-
-
     //setting
     Route::get('/A_setting', [SettingController::class, 'A_setting'])->name('A_setting');
     Route::get('/A_edit_about', [SettingController::class, 'A_edit_about'])->name('A_edit_about');
     Route::get('/A_edit_contact', [SettingController::class, 'A_edit_contact'])->name('A_edit_contact');
+    Route::get('/A_contact_messages', [SettingController::class, 'A_contact_messages'])->name('A_contact_messages');
 
     // sitemap
     Route::get('/A_generate_sitemap', [\App\Http\Controllers\Admin\SitemapController::class, 'generate'])->name('A_generate_sitemap');
+
+    Route::get('/A_queue_monitor', [QueueMonitorController::class, 'index'])->name('A_queue_monitor');
+    Route::post('/A_queue_monitor/start', [QueueMonitorController::class, 'start'])->middleware('throttle:10,1')->name('A_queue_monitor_start');
+    Route::post('/A_queue_monitor/stop', [QueueMonitorController::class, 'stop'])->middleware('throttle:10,1')->name('A_queue_monitor_stop');
+    Route::post('/A_queue_monitor/retry', [QueueMonitorController::class, 'retry'])->middleware('throttle:20,1')->name('A_queue_monitor_retry');
+    Route::post('/A_queue_monitor/retry-all', [QueueMonitorController::class, 'retryAll'])->middleware('throttle:5,1')->name('A_queue_monitor_retry_all');
 
 
     Route::get('/A_edit_frequently_asked_questions', [SettingController::class, 'A_edit_frequently_asked_questions'])->name('A_edit_frequently_asked_questions');
@@ -139,6 +152,9 @@ Route::middleware(['auth', 'verified', 'AccessUser'])->group(function () {
     Route::post('/ajax_post_packing_update', [\App\Http\Controllers\Admin\PackingController::class, 'ajax_post_packing_update'])->name('ajax_post_packing_update');
     Route::post('/ajax_post_packing_create_pattern', [\App\Http\Controllers\Admin\PackingController::class, 'ajax_post_packing_create_pattern'])->name('ajax_post_packing_create_pattern');
 
+    Route::get('/A_staff_access', [StaffAccessController::class, 'index'])->name('A_staff_access');
+    Route::post('/A_s_staff_access', [StaffAccessController::class, 'update'])->name('A_s_staff_access');
+
 
 });
 
@@ -150,6 +166,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //customer-comment
     Route::post('/C_add_comment/{id}', [IndexController::class, 'C_add_comment'])->name('C_add_comment');
+    Route::post('/create_comment', [\App\Http\Controllers\Customer\ClientCommentController::class, 'create_comment'])->name('create_comment');
 
 
     //customer-profile
@@ -168,6 +185,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/ajax_get_address/{id}', [UserProfileController::class, 'ajax_get_address'])->name('ajax_get_address');
     Route::post('/s_profile_edit_address/{id}', [UserProfileController::class, 's_profile_edit_address'])->name('s_profile_edit_address');
     Route::get('/order_detail', [UserProfileController::class, 'order_detail'])->name('order_detail');
+    Route::post('/cancel_order', [UserProfileController::class, 'cancel_order'])->middleware('throttle:5,1')->name('cancel_order');
+    Route::get('/profile_wallet', [UserProfileController::class, 'profile_wallet'])->name('profile_wallet');
 
 
     //cart
@@ -209,6 +228,9 @@ Route::get('/search', [\App\Http\Controllers\Customer\PostClientController::clas
 //about
 Route::get('/about', [CompanyInfoController::class, 'about'])->name('about');
 Route::get('/contact', [CompanyInfoController::class, 'contact'])->name('contact');
+Route::post('/contact', [CompanyInfoController::class, 'send_contact'])
+    ->middleware('throttle:5,10')
+    ->name('contact.send');
 
 Route::get('/order_guide', [CompanyInfoController::class, 'order_guide'])->name('order_guide');
 Route::get('/frequently_asked_questions', [CompanyInfoController::class, 'frequently_asked_questions'])->name('frequently_asked_questions');
@@ -220,7 +242,6 @@ Route::get('/return_order', [CompanyInfoController::class, 'return_order'])->nam
 Route::get('/get_image_by_id/{id}', [ProductController::class, 'get_image_by_id'])->name('get_image_by_id');
 Route::get('/get_post_image_by_id/{id}', [\App\Http\Controllers\Admin\PostController::class, 'get_post_image_by_id'])->name('get_post_image_by_id');
 Route::get('/get_file_by_id/{id}', [\App\Http\Controllers\Admin\PostController::class, 'get_file_by_id'])->name('get_file_by_id');
-Route::post('/A_ajax_remove_file', [\App\Http\Controllers\Admin\PostController::class, 'A_ajax_remove_file'])->name('A_ajax_remove_file');
 
 Route::get('/mobile_number_verification', [UserProfileController::class, 'mobile_number_verification'])->name('mobile_number_verification');
 Route::post('/s_mobile_number_verification', [UserProfileController::class, 's_mobile_number_verification'])->name('s_mobile_number_verification');
@@ -236,6 +257,7 @@ Route::get('/register_customer', [UserProfileController::class, 'register_custom
 Route::get('/ajax_register_customer', [UserProfileController::class, 'ajax_register_customer'])->name('ajax_register_customer');
 Route::post('/s_register_customer', [UserProfileController::class, 's_register_customer'])->name('s_register_customer');
 Route::get('/customer_links', [UserProfileController::class, 'customer_links'])->name('customer_links');
+Route::get('/customer_links_s', [UserProfileController::class, 'customer_links_s'])->name('customer_links_s');
 
 Route::get('/product_guide', [\App\Http\Controllers\Customer\IndexController::class, 'product_guide'])->name('product_guide');
 

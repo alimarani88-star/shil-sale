@@ -131,6 +131,14 @@
             line-height: 1.8;
         }
 
+        .guide-subject-title {
+            font-size: 1.55rem;
+            font-weight: 800;
+            color: #1e3a5f;
+            margin: 0 0 1.5rem;
+            text-align: center;
+        }
+
         .guide-badge {
             display: inline-block;
             background: linear-gradient(90deg, #dbeafe 0%, #e0f2fe 100%);
@@ -176,8 +184,11 @@
     <main class="main default" role="main">
         <section class="guide-section">
             <div class="container">
+                @if(!empty($guide_subject_name))
+                    <h1 class="guide-subject-title">{{ $guide_subject_name }}</h1>
+                @endif
                 <div class="row g-4">
-                    <div class="col-12 col-md-6">
+                    <!-- <div class="col-12 col-md-6">
                         <div class="card guide-card support-card">
                             <div class="card-body">
                                 <span class="guide-badge">پشتیبانی</span>
@@ -189,7 +200,7 @@
                                 <a href="https://gap.shiliran.ir/" class="btn btn-primary" target="_blank" rel="noopener noreferrer">شروع گفت‌وگو</a>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <div class="col-12 col-md-6">
                         <div class="card guide-card manual-card">

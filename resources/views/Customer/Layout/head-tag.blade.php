@@ -46,55 +46,6 @@
     <link href="{{ asset('assets/css/plugins/AddTags.css') }}" rel="stylesheet"/>
     <link rel="stylesheet" href="{{asset('customer-assets/select2/css/select2.min.css') }}">
 
-    <style>
-        .online-support-link {
-            position: fixed;
-            right: 24px;
-            bottom: 24px;
-            z-index: 1040;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            min-height: 50px;
-            padding: 0 22px;
-            border-radius: 999px;
-            background: #6a1b9a;
-            color: #fff;
-            box-shadow: 0 10px 24px rgba(106, 27, 154, 0.28);
-            font-size: 16px;
-            font-weight: 700;
-            line-height: 1;
-            transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease;
-        }
-
-        .online-support-link:hover,
-        .online-support-link:focus {
-            color: #fff;
-            background: #7b22b3;
-            box-shadow: 0 12px 28px rgba(106, 27, 154, 0.34);
-            text-decoration: none;
-            transform: translateY(-2px);
-        }
-
-        .online-support-link i {
-            font-size: 21px;
-        }
-
-        @media (max-width: 575.98px) {
-            .online-support-link {
-                right: 16px;
-                bottom: 16px;
-                min-height: 44px;
-                padding: 0 16px;
-                font-size: 14px;
-            }
-
-            .online-support-link i {
-                font-size: 18px;
-            }
-        }
-    </style>
-
     <link rel="manifest" href="{{ asset('manifest.json') }}">
     
     <meta name="theme-color" content="#6366f1">

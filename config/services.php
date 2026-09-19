@@ -36,7 +36,7 @@ return [
     ],
 
     'shiliran' => [
-        'base_uri' => env('SHILIRAN_API_BASE', 'https://app.shiliran.ir'),
+        'base_uri' => env('SHILIRAN_API_BASE', 'https://app.shil.ir'),
         'key'      => env('GLOBAL_API_KEY'),
         'cert'     => env('SHILIRAN_CERT',storage_path('certs/cacert.pem')),
     ],

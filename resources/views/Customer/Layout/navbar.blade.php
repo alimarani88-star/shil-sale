@@ -101,6 +101,15 @@
                         @endforeach
                     </ul>
                 </li>
+                @guest
+                    <li class="list-item">
+                        <a class="{{ request()->routeIs('login', 'register') ? 'active-menu-link' : '' }}" href="{{ route('login') }}">ورود / ثبت نام</a>
+                    </li>
+                @else
+                    <li class="list-item">
+                        <a class="{{ request()->routeIs('profile_personal_info') ? 'active-menu-link' : '' }}" href="{{ route('profile_personal_info') }}">حساب کاربری</a>
+                    </li>
+                @endguest
                 <li class="list-item">
                     <a class=" {{request()->routeIs('home') ? 'active-menu-link' : ''}}" href="/" >صفحه نخست</a>
                 </li>
@@ -118,7 +127,7 @@
                     <a class="" href="{{ route('register_customer') }}" >ثبت اطلاعات مشتریان</a>
                </li>
                 <li class="list-item">
-                    <a class="" href="https://app.shiliran.ir/warranty" >ثبت گارانتی</a>
+                    <a class="" href="https://app.shil.ir/warranty" >ثبت گارانتی</a>
                 </li>
             </ul>
         </div>
@@ -133,7 +142,7 @@
         <i class="now-ui-icons shopping_basket"></i>
         <span>سبد خرید</span>
     </a>
-    <a href="">
+    <a href="#" class="mobile-bottom-nav-categories" id="mobileBottomNavCategories">
         <i class="now-ui-icons design_bullet-list-67"></i>
         <span>دسته‌بندی</span>
     </a>
@@ -142,6 +151,97 @@
         <span>خانه</span>
     </a>
 </div>
+
+<div class="mobile-category-overlay" id="mobileCategoryOverlay" aria-hidden="true"></div>
+<div class="mobile-category-panel" id="mobileCategoryPanel" aria-hidden="true">
+    <div class="mobile-category-panel-header">
+        <span>دسته‌بندی محصولات</span>
+        <button type="button" class="mobile-category-close" id="mobileCategoryClose" aria-label="بستن">
+            <i class="fa fa-times"></i>
+        </button>
+    </div>
+    <ul class="mobile-category-list">
+        @include('Customer.Layout.partials.mobile-category-items', ['items' => $categories ?? []])
+    </ul>
+</div>
+@push('scripts')
+    <script>
+        $(document).ready(function () {
+            const $overlay = $('#mobileCategoryOverlay');
+            const $panel = $('#mobileCategoryPanel');
+            const $trigger = $('#mobileBottomNavCategories');
+
+            function openMobileCategories() {
+                $overlay.addClass('is-open').attr('aria-hidden', 'false');
+                $panel.addClass('is-open').attr('aria-hidden', 'false');
+                $trigger.addClass('active-categories');
+                $('body').addClass('mobile-category-open');
+            }
+
+            function closeMobileCategories() {
+                $overlay.removeClass('is-open').attr('aria-hidden', 'true');
+                $panel.removeClass('is-open').attr('aria-hidden', 'true');
+                $trigger.removeClass('active-categories');
+                $('body').removeClass('mobile-category-open');
+                $panel.find('.mobile-category-item.is-open').removeClass('is-open');
+            }
+
+            $trigger.on('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if ($panel.hasClass('is-open')) {
+                    closeMobileCategories();
+                } else {
+                    openMobileCategories();
+                }
+            });
+
+            $('#mobileCategoryClose').on('click', function (e) {
+                e.preventDefault();
+                closeMobileCategories();
+            });
+
+            $overlay.on('click', function () {
+                closeMobileCategories();
+            });
+
+            // با کلیک روی بقیه آیکون‌های نوار پایین، لیست بسته شود
+            $('.mobile-bottom-nav a').not($trigger).on('click', function () {
+                closeMobileCategories();
+            });
+
+            $(document).on('click', '.mobile-category-toggle', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleMobileCategory($(this).closest('.mobile-category-item'));
+            });
+
+            $(document).on('click', '.mobile-category-link', function (e) {
+                const $item = $(this).closest('.mobile-category-item');
+                if (!$item.hasClass('has-children')) {
+                    return;
+                }
+
+                e.preventDefault();
+                e.stopPropagation();
+                toggleMobileCategory($item);
+            });
+
+            function toggleMobileCategory($item) {
+                const willOpen = !$item.hasClass('is-open');
+                $item.siblings('.mobile-category-item.is-open').removeClass('is-open');
+                $item.toggleClass('is-open', willOpen);
+            }
+
+            $(document).on('keyup', function (e) {
+                if (e.key === 'Escape' && $panel.hasClass('is-open')) {
+                    closeMobileCategories();
+                }
+            });
+        });
+    </script>
+@endpush
+
 @section('scripts')
     <script>
         $(document).ready(function() {
@@ -219,7 +319,7 @@
                                                     const productSlug = item.slug || item.id;
                                                     $('.search-box-list').append(`
                                                 <li class="list-group-item contsearch">
-                                                    <a href="/show_product_by_id/${encodeURIComponent(productSlug)}" class="gsearch">
+                                                    <a href="/product/${encodeURIComponent(productSlug)}" class="gsearch">
                                                         <i class="fad fa-search"></i>
                                                         ${item.product_name}
                                                     </a>

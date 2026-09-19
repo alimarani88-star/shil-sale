@@ -17,6 +17,7 @@ use App\Models\Product;
 use App\Models\Product_attributes;
 use App\Models\Guide_documents;
 
+use App\Services\CartService;
 use App\Services\GetDiscountService;
 use App\Services\ShiliranApiInterface;
 
@@ -31,8 +32,10 @@ class IndexController extends Controller
 
     protected ShiliranApiInterface $api;
 
-    public function __construct(ShiliranApiInterface $api)
-    {
+    public function __construct(
+        ShiliranApiInterface $api,
+        private readonly CartService $cartService,
+    ) {
         $this->api = $api;
     }
 
@@ -74,102 +77,93 @@ class IndexController extends Controller
 
 
         $lastProducts = Product::with('images')
-            ->orderBy('created_at', 'desc')
             ->where('status', 1)
-            ->whereIn('id',[84,79,34,35,87])
-            ->take(5)
+            ->where('new_product', 1)
+            ->orderBy('created_at', 'desc')
             ->get();
-
-
-        $topFavoriteProducts = DB::table('favorites')
-            ->where('favoritable_type', Product::class)
-            ->select('favoritable_id', DB::raw('COUNT(*) as total'))
-            ->groupBy('favoritable_id')
-            ->orderByDesc('total')
-            ->limit(5)
-            ->get();
-
-        $productIds = $topFavoriteProducts->pluck('favoritable_id');
-
-        $topProducts = Product::whereIn('id', $productIds)->with('images')->get();
 
 
         $category_banners = [
             [
-                "title" => "کلید های مینیاتوری",
-                "slug"  => "miniature-key",
-                "src"   => "assets/img/banner/product-01.jpg",
+                "title" => "کلید های قطع و وصل",
+                "slug"  => "on-off-switches",
+                // "src"   => "assets/img/banner/product-01.jpg",
+                "src"   => "assets/img/banner/product-0112.webp",
             ],
             [
-                "title" => "محافظ جان",
-                "slug"  => "miniature-life-saving-key",
-                "src"   => "assets/img/banner/product-02.jpg",
-            ],
-            [
-                "title"  => "کلید کنتاکتور",
-                "slug" => "contactor-key",
-                "src"   => "assets/img/banner/product-03.jpg",
-            ],
-            [
-                "title" => "تجهیزات صنعتی",
-                "slug"  => "industrial-equipment",
-                "src"   => "assets/img/banner/product-04.jpg",
-            ],
-            [
-                "title" => "کلید اتوماتیک قابل تنظیم",
-                "slug"  => "adjustable-automatic-switch",
-                "src"   => "assets/img/banner/product-05.jpg",
-            ],
-            [
-                "title" => "کلید اتوماتیک الکترونیکی",
-                "slug"  => "electronic-automatic-key",
-                "src"   => "assets/img/banner/product-06.jpg",
-            ],
-            [
-                "title" => "کلید اتوماتیک فیکس",
-                "slug"  => "automatic-key-fix",
-                "src"   => "assets/img/banner/product-07.jpg",
-            ],
-            [
-                "title" => "کلید هوشمند",
-                "slug"  => "smart-electronics",
-                "src"   => "assets/img/banner/product-08.jpg",
-            ],
-            [
-                "title" => "تجهیزات خورشیدی",
+                "title" => "تجهیزات خورشیدی و نیروگاهی",
                 "slug"  => "solar-and-power-plant-equipment",
-                "src"   => "assets/img/banner/product-09.jpg",
+                // "src"   => "assets/img/banner/product-02.jpg",
+                 "src"   => "assets/img/banner/product-0110.webp",
             ],
             [
-                "title" => "استابلایزر",
-                "slug"  => "stabilizer",
-                "src"   => "assets/img/banner/product-10.jpg",
+                "title"  => "کلید های فشاری",
+                "slug" => "push-buttons",
+                // "src"   => "assets/img/banner/product-03.jpg",
+                 "src"   => "assets/img/banner/product-0111.webp",
             ],
             [
-                "title" => "اینورتر",
-                "slug"  => "inverter",
-                "src"   => "assets/img/banner/product-11.jpg",
+                "title" => "تجهیرات حفاظتی",
+                "slug"  => "protective-equipment",
+                // "src"   => "assets/img/banner/product-04.jpg",
+                 "src"   => "assets/img/banner/product-0108.webp",
             ],
-            [
-                "title" => "محافظ ولتاژ",
-                "slug"  => "voltage-protector",
-                "src"   => "assets/img/banner/product-12.jpg",
-            ],
+            // [
+            //     "title" => "کلید اتوماتیک قابل تنظیم",
+            //     "slug"  => "adjustable-automatic-switch",
+            //     "src"   => "assets/img/banner/product-05.jpg",
+            // ],
+            // [
+            //     "title" => "کلید اتوماتیک الکترونیکی",
+            //     "slug"  => "electronic-automatic-key",
+            //     "src"   => "assets/img/banner/product-06.jpg",
+            // ],
+            // [
+            //     "title" => "کلید اتوماتیک فیکس",
+            //     "slug"  => "automatic-key-fix",
+            //     "src"   => "assets/img/banner/product-07.jpg",
+            // ],
+            // [
+            //     "title" => "کلید هوشمند",
+            //     "slug"  => "smart-electronics",
+            //     "src"   => "assets/img/banner/product-08.jpg",
+            // ],
+            // [
+            //     "title" => "تجهیزات خورشیدی",
+            //     "slug"  => "solar-and-power-plant-equipment",
+            //     "src"   => "assets/img/banner/product-09.jpg",
+            // ],
+            // [
+            //     "title" => "استابلایزر",
+            //     "slug"  => "stabilizer",
+            //     "src"   => "assets/img/banner/product-10.jpg",
+            // ],
+            // [
+            //     "title" => "اینورتر",
+            //     "slug"  => "inverter",
+            //     "src"   => "assets/img/banner/product-11.jpg",
+            // ],
+            // [
+            //     "title" => "محافظ ولتاژ",
+            //     "slug"  => "voltage-protector",
+            //     "src"   => "assets/img/banner/product-12.jpg",
+            // ],
         ];
 
 
-        return view('app_main', compact('lastProducts', 'offerProducts', 'amazingSaleDiscount', 'topProducts' , 'category_banners'));
+        return view('app_main', compact('lastProducts', 'offerProducts', 'amazingSaleDiscount', 'category_banners'));
     }
 
     public function redirect_product_by_id($id)
     {
         $product = Product::select('id', 'slug')->findOrFail($id);
 
-        if ($product->slug) {
-            return redirect()->route('show_product_by_id', $product->slug, 301);
-        }
+        return redirect()->route('product', $product->slug ?: $product->id, 301);
+    }
 
-        return $this->render_product(Product::with('images')->findOrFail($id));
+    public function redirect_product_by_slug(string $slug)
+    {
+        return redirect()->route('product', trim($slug), 301);
     }
 
     public function show_product_by_id111111($slug)
@@ -255,7 +249,7 @@ class IndexController extends Controller
             ->firstOrFail();
 
         $data1 = $this->api->getInventoryByItemId($product->product_id_in_app);
-       
+
         if($data1['status'] == true){
             $inventory= $data1['data'];
         }else{
@@ -267,38 +261,54 @@ class IndexController extends Controller
 
     public function show_product_by_id(string $slug)
     {
-    $product = Product::query()
-        ->with('images')
-        ->where('slug', trim($slug))
-        ->firstOrFail();
+        $slug = trim($slug);
 
-    $inventory = 0;
+        $product = Product::query()
+            ->with('images')
+            ->where('slug', $slug)
+            ->first();
 
-    try {
-        $response = $this->api->getInventoryByItemId(
-            $product->product_id_in_app
-        );
+        // اگر با id عددی باز شده باشد، در صورت داشتن slug به آدرس سئوپسند هدایت شود
+        if (!$product && ctype_digit($slug)) {
+            $product = Product::query()
+                ->with('images')
+                ->find($slug);
 
-        if (
-            is_array($response) &&
-            ($response['status'] ?? false) === true
-        ) {
-            $inventory = (int) ($response['data'] ?? 0);
+            if ($product && filled($product->slug) && $product->slug !== $slug) {
+                return redirect()->route('product', $product->slug, 301);
+            }
         }
-    } catch (\Throwable $exception) {
-        report($exception);
 
-        $inventory = 0;
-    }
+        if (!$product) {
+            abort(404);
+        }
 
-       return $this->render_product($product, $inventory);
+        $inventory = $this->cartService->getAvailableInventory($product);
+
+        return $this->render_product($product, $inventory);
     }
 
     private function render_product(Product $product , $inventory)
     {
         $productId = $product->id;
 
-        $group = $this->api->getGroupById($product->group_id_in_app);
+        $mainGroupName = null;
+        if (!empty($product->group_id_in_app)) {
+            try {
+                $group = $this->api->getGroupById((int) $product->group_id_in_app);
+                if (
+                    is_array($group)
+                    && ($group['status'] ?? false) === true
+                    && is_array($group['data'] ?? null)
+                ) {
+                    $mainGroupName = $group['data']['main_group_name']
+                        ?? ($group['data']['name'] ?? null);
+                }
+            } catch (\Throwable $exception) {
+                report($exception);
+                $mainGroupName = null;
+            }
+        }
 
         $product_Meta = Product_attributes::where('product_id', $productId)
             ->where('meta_name', 'رنگ')
@@ -306,6 +316,7 @@ class IndexController extends Controller
 
         $productAttributes = Product_attributes::where('product_id', $productId)->get();
         $guaranteeDuration = $this->getGuaranteeDuration($product);
+        $maximumOrderLimit = $this->cartService->getMaximumOrderLimitOnSite($product);
 
         //DISCOUNT
         $discountService = new GetDiscountService();
@@ -357,7 +368,7 @@ class IndexController extends Controller
         }
 
 
-        return view('Customer.Product.product', compact('product', 'group', 'product_Meta', 'productAttributes', 'guaranteeDuration', 'postType', 'postStatus', 'comments', 'existsInCart', 'cart_items','inventory'));
+        return view('Customer.Product.product', compact('product', 'mainGroupName', 'product_Meta', 'productAttributes', 'guaranteeDuration', 'maximumOrderLimit', 'postType', 'postStatus', 'comments', 'existsInCart', 'cart_items','inventory'));
     }
 
 
@@ -368,21 +379,26 @@ class IndexController extends Controller
             return null;
         }
 
-        $itemData = $this->api->getItemById((int) $product->product_id_in_app);
+        try {
+            $itemData = $this->api->getItemById((int) $product->product_id_in_app);
 
-        if (($itemData['status'] ?? false) !== true) {
+            if (($itemData['status'] ?? false) !== true) {
+                return null;
+            }
+
+            $duration = $itemData['data']['guarantee_duration'] ?? null;
+
+            if ($duration === null || $duration === '') {
+                return null;
+            }
+
+            $duration = (int) $duration;
+
+            return $duration > 0 ? $duration : null;
+        } catch (\Throwable $exception) {
+            report($exception);
             return null;
         }
-
-        $duration = $itemData['data']['guarantee_duration'] ?? null;
-
-        if ($duration === null || $duration === '') {
-            return null;
-        }
-
-        $duration = (int) $duration;
-
-        return $duration > 0 ? $duration : null;
     }
 
     function getPublishedPost($product)
@@ -588,50 +604,15 @@ class IndexController extends Controller
 
 
 
-    public function product_guide11111(Request $request)
-    {
-        $group = (string)$request->query('group', '');
-        $agent = (string)$request->query('agent', '');
-        $main_group = (string)$request->query('main_group', '');
-
-        if ($group === '75' && $agent === '0040') {
-            $filePath = public_path('documents/voltage_protector_3p_040.pdf');
-
-            if (!file_exists($filePath)) {
-                abort(404, 'PDF file not found.');
-            }
-
-            return response()->file($filePath, [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'inline; filename="voltage_protector_3p_040.pdf"',
-            ]);
-        }elseif($main_group === '4300' && $agent === '0041'){
-            return view('Customer.Guide.product_guide_support');
-        }elseif($main_group === '4400' && $agent === '0041'){
-            return view('Customer.Guide.product_guide_support');
-        }elseif($main_group === '4500' && $agent === '0041'){
-            return view('Customer.Guide.product_guide_support');
-        }elseif($group === '104' && $agent === '0034'){
-            return view('Customer.Guide.product_guide_support');
-        }elseif($main_group === '4200' && $agent === '0041'){
-            return view('Customer.Guide.product_guide_support');
-        }elseif($main_group === '5100'){
-            return view('Customer.Guide.product_guide_support');
-        }elseif($group === '87'){
-            return view('Customer.Guide.product_guide_support');
-        }
     
-
-        return view('Customer.Guide.product_guide_support');
-
-
-    }
 
     public function product_guide(Request $request)
     {
+
         $group = (string)$request->query('group') ?? null;
         $agent = (string)$request->query('agent', '');
         $main_group = (string)$request->query('main_group', '');
+        $product = (string)$request->query('product', '');
 
 
         if(!$group){
@@ -643,35 +624,120 @@ class IndexController extends Controller
         if(!$main_group){
             $main_group = null;
         }
+        if(!$product){
+            $product = null;
+        }
 
-        $guide_documents=Guide_documents::where('group_id', $group)
+        $guide_documents=Guide_documents::
+              where('group_id', $group)
+            ->where('product_id', $product)
             ->where('main_group_id', $main_group)
             ->where('agent',$agent)
             ->get();
 
+        $guide_subject_name = $this->resolveGuideSubjectName($product, $group, $main_group);
 
         if ($group === '75' && $agent === '0040') {
-            return view('Customer.Guide.product_guide_support',compact('guide_documents'));
-        }elseif($main_group === '4300' && $agent === '0041'){
-            return view('Customer.Guide.product_guide_support',compact('guide_documents'));
-        }elseif($main_group === '4400' && $agent === '0041'){
-            return view('Customer.Guide.product_guide_support',compact('guide_documents'));
-        }elseif($main_group === '4500' && $agent === '0041'){
-            return view('Customer.Guide.product_guide_support',compact('guide_documents'));
-        }elseif($group === '104' && $agent === '0034'){
-            return view('Customer.Guide.product_guide_support',compact('guide_documents'));
-        }elseif($main_group === '4200' && $agent === '0041'){
-            return view('Customer.Guide.product_guide_support',compact('guide_documents'));
-        }elseif($main_group === '5100'){
-            return view('Customer.Guide.product_guide_support',compact('guide_documents'));
-        }elseif($group === '87'){
-            return view('Customer.Guide.product_guide_support',compact('guide_documents'));
-        }elseif($group === '86'){
-            return view('Customer.Guide.product_guide_support',compact('guide_documents'));
+            return view('Customer.Guide.product_guide_support',compact('guide_documents', 'guide_subject_name'));
+        }elseif ($product === '2429' && $agent === '0040'){
+            return view('Customer.Guide.product_guide_support',compact('guide_documents', 'guide_subject_name'));
+        }elseif ($group === '203' && $agent === '0040'){
+            return view('Customer.Guide.product_guide_support',compact('guide_documents', 'guide_subject_name'));
         }
-        
-        return view('Customer.Guide.product_guide_support');
+        elseif($main_group === '4300' && $agent === '0041'){
+            return view('Customer.Guide.product_guide_support',compact('guide_documents', 'guide_subject_name'));
+        }elseif($main_group === '4400' && $agent === '0041'){
+            return view('Customer.Guide.product_guide_support',compact('guide_documents', 'guide_subject_name'));
+        }elseif($main_group === '4500' && $agent === '0041'){
+            return view('Customer.Guide.product_guide_support',compact('guide_documents', 'guide_subject_name'));
+        }elseif($group === '104' && $agent === '0034'){
+            return view('Customer.Guide.product_guide_support',compact('guide_documents', 'guide_subject_name'));
+        }elseif($main_group === '4200' && $agent === '0041'){
+            return view('Customer.Guide.product_guide_support',compact('guide_documents', 'guide_subject_name'));
+        }elseif($main_group === '5100'){
+            return view('Customer.Guide.product_guide_support',compact('guide_documents', 'guide_subject_name'));
+        }elseif($group === '87'){
+            return view('Customer.Guide.product_guide_support',compact('guide_documents', 'guide_subject_name'));
+        }elseif($group === '86'){
+            return view('Customer.Guide.product_guide_support',compact('guide_documents', 'guide_subject_name'));
+        }
+        // elseif($product === '2521'){
+        //     return view('Customer.Guide.product_guide_support',compact('guide_documents', 'guide_subject_name'));
+        // }
+
+        return view('Customer.Guide.product_guide_support',compact('guide_documents', 'guide_subject_name'));
 
 
+    }
+
+    private function resolveGuideSubjectName(?string $product, ?string $group, ?string $mainGroup): ?string
+    {
+        try {
+            if ($product) {
+                $name = Product::query()
+                    ->where('product_id_in_app', $product)
+                    ->value('product_name');
+                if (is_string($name) && $name !== '') {
+                    return $name;
+                }
+                if (ctype_digit($product)) {
+                    $res = $this->api->getItemById((int) $product);
+                    if (($res['status'] ?? false) === true && is_array($res['data'] ?? null)) {
+                        $apiName = $res['data']['TITLE2'] ?? ($res['data']['title'] ?? null);
+                        if (is_string($apiName) && $apiName !== '') {
+                            return $apiName;
+                        }
+                    }
+                }
+
+                return null;
+            }
+
+            if ($group) {
+                $name = Category::query()
+                    ->where('type', 'product')
+                    ->where('app_group_type', 'group')
+                    ->where('app_id', $group)
+                    ->value('name');
+                if (is_string($name) && $name !== '') {
+                    return $name;
+                }
+                if (ctype_digit($group)) {
+                    $res = $this->api->getGroupById((int) $group);
+                    if (($res['status'] ?? false) === true && is_array($res['data'] ?? null)) {
+                        $apiName = $res['data']['title'] ?? ($res['data']['name'] ?? null);
+                        if (is_string($apiName) && $apiName !== '') {
+                            return $apiName;
+                        }
+                    }
+                }
+
+                return null;
+            }
+
+            if ($mainGroup) {
+                $name = Category::query()
+                    ->where('type', 'product')
+                    ->where('app_group_type', 'main')
+                    ->where('app_id', $mainGroup)
+                    ->value('name');
+                if (is_string($name) && $name !== '') {
+                    return $name;
+                }
+                if (ctype_digit($mainGroup)) {
+                    $res = $this->api->getMainGroupById((int) $mainGroup);
+                    if (($res['status'] ?? false) === true && is_array($res['data'] ?? null)) {
+                        $apiName = $res['data']['name'] ?? null;
+                        if (is_string($apiName) && $apiName !== '') {
+                            return $apiName;
+                        }
+                    }
+                }
+            }
+        } catch (\Throwable $exception) {
+            report($exception);
+        }
+
+        return null;
     }
 }

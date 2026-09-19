@@ -27,7 +27,6 @@ class BmiGatewayService
 
     public function requestPayment(string $orderId, int $amount, string $returnUrl): array
     {
-        $amount=10000;
         if ($amount <= 0) {
             return [
                 'success' => false,

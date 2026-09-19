@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -46,10 +47,30 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        $target = $this->redirectAfterLogin($request);
+
         if ($request->header('X-Inertia')) {
-            return Inertia::location(route('A_home'));
+            return Inertia::location($target);
         }
-        return redirect()->route('A_home');
+        return redirect()->to($target);
+    }
+
+    private function redirectAfterLogin(Request $request): string
+    {
+        $user = $request->user();
+        if ($user instanceof User && $user->isStaff()) {
+            return route('A_home');
+        }
+
+        $home = route('home');
+        $intended = $request->session()->pull('url.intended', $home);
+        $path = parse_url($intended, PHP_URL_PATH) ?: '/';
+
+        if ($path === '/dashboard' || str_starts_with($path, '/dashboard/') || str_starts_with($path, '/A_')) {
+            return $home;
+        }
+
+        return $intended;
     }
 
     /**

@@ -22,6 +22,7 @@ class Product extends Model
         'price_unit',
         'status',
         'marketable',
+        'new_product',
         'sales_start_date',
         'sales_end_date',
         'description',

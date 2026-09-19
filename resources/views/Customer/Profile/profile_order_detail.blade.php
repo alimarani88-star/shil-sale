@@ -14,14 +14,22 @@
                         <div class="col-md-4 mb-2">
                             <div class="d-flex align-items-center justify-content-between">
                                 <p class="mb-0">وضعیت سفارش:
-                                    @if($order->status == 0)
-                                        <span class="btn btn-warning btn-sm mb-0">{{ $order->status_title }}</span>
-                                    @elseif($order->status == 2)
-                                        <span class="btn btn-danger btn-sm mb-0">{{ $order->status_title }}</span>
-                                    @elseif($order->status == 1)
-                                        <span class="btn btn-success btn-sm mb-0">{{ $order->status_title }}</span>
-                                    @elseif($order->status == 3)
-                                        <span class="btn btn-primary btn-sm mb-0">{{ $order->status_title }}</span>
+                                    @if((int) $order->status === \App\Models\Order::STATUS_PENDING_PAYMENT)
+                                        <span class="btn btn-warning btn-sm mb-0">{{ $order->resolvedStatusTitle() }}</span>
+                                    @elseif((int) $order->status === \App\Models\Order::STATUS_PAYMENT_CONFIRMED)
+                                        <span class="btn btn-danger btn-sm mb-0">{{ $order->resolvedStatusTitle() }}</span>
+                                    @elseif((int) $order->status === \App\Models\Order::STATUS_PAID)
+                                        <span class="btn btn-success btn-sm mb-0">{{ $order->resolvedStatusTitle() }}</span>
+                                    @elseif((int) $order->status === \App\Models\Order::STATUS_INVOICED)
+                                        <span class="btn btn-primary btn-sm mb-0">{{ $order->resolvedStatusTitle() }}</span>
+                                    @elseif((int) $order->status === \App\Models\Order::STATUS_SHIPPED)
+                                        <span class="btn btn-primary btn-sm mb-0">{{ $order->resolvedStatusTitle() }}</span>
+                                    @elseif((int) $order->status === \App\Models\Order::STATUS_PAYMENT_EXPIRED)
+                                        <span class="btn btn-danger btn-sm mb-0">{{ $order->resolvedStatusTitle() }}</span>
+                                    @elseif((int) $order->status === \App\Models\Order::STATUS_CANCELLED_TO_WALLET)
+                                        <span class="btn btn-danger btn-sm mb-0">{{ $order->resolvedStatusTitle() }}</span>
+                                    @else
+                                        <span class="btn btn-secondary btn-sm mb-0">{{ $order->resolvedStatusTitle() }}</span>
                                     @endif
                                 </p>
                             </div>
@@ -36,6 +44,11 @@
                         <div class="col-md-3 mb-2">
                             <p>مبلغ کل: {{ number_format($order->total_price) }} ریال</p>
                         </div>
+                        @if((int) $order->wallet_used_amount > 0)
+                            <div class="col-md-3 mb-2">
+                                <p>پرداخت از کیف پول: {{ number_format($order->wallet_used_amount) }} ریال</p>
+                            </div>
+                        @endif
 
                         <div class="col-md-3 mb-2">
                             <p>تحویل گیرنده:
@@ -140,10 +153,66 @@
                         </div>
                     </div>
 
-                    <div class="btn" style="background-color: #3E5F44;">پرداخت سفارش</div>
-                    <div class="btn btn-danger">لغو سفارش</div>
+                    <div class="mt-3 d-flex flex-wrap" style="gap: 8px;">
+                        @if($order->isPendingPayment())
+                            <a href="{{ route('cart_payment', ['order' => $order->id]) }}"
+                               class="btn js-disable-after-click"
+                               style="background-color: #3E5F44; color: #fff;">
+                                پرداخت سفارش
+                            </a>
+                        @endif
+
+                        @if($order->canBeCancelledByCustomer())
+                            <form id="cancel-order-form" method="POST" action="{{ route('cancel_order') }}">
+                                @csrf
+                                <input type="hidden" name="order" value="{{ $order->id }}">
+                                <button type="button" class="btn btn-danger js-cancel-order">لغو سفارش</button>
+                            </form>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
     </main>
+@endsection
+
+@section('script')
+    <script>
+        (function () {
+            function disablePayLink(link) {
+                if (!link || link.getAttribute('aria-disabled') === 'true') {
+                    return;
+                }
+                link.setAttribute('aria-disabled', 'true');
+                link.style.pointerEvents = 'none';
+                link.style.opacity = '0.65';
+            }
+
+            document.querySelectorAll('.js-disable-after-click').forEach(function (el) {
+                el.addEventListener('click', function () {
+                    disablePayLink(el);
+                });
+            });
+
+            document.querySelectorAll('.js-cancel-order').forEach(function (btn) {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    Swal.fire({
+                        text: "با لغو سفارش، مبلغ پرداخت‌شده به کیف پول شما برمی‌گردد. ادامه می‌دهید؟",
+                        showCancelButton: true,
+                        confirmButtonText: "بله، لغو شود",
+                        cancelButtonText: "خیر",
+                        reverseButtons: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#777"
+                    }).then(function (result) {
+                        if (result.value) {
+                            btn.disabled = true;
+                            document.getElementById('cancel-order-form').submit();
+                        }
+                    });
+                });
+            });
+        })();
+    </script>
 @endsection
