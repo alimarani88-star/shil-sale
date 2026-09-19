@@ -20,5 +20,7 @@ return [
     'published' => 'منتشر شده',
     'product' => 'محصول',
     'Category' => 'عمومی',
+    'guide' => 'راهنما',
+    'category' => 'عمومی',
 
 ];
