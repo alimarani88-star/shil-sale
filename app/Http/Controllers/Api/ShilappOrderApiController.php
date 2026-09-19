@@ -81,7 +81,6 @@ class ShilappOrderApiController extends Controller
             'message' => '',
         ]);
     }
-
     public function order(int $orderId): JsonResponse
     {
         $order = Order::with([
